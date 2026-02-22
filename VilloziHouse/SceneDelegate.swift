@@ -22,10 +22,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //    Передаём windowScene — привязываем окно к сцене.
         let window = UIWindow(windowScene: windowScene)
         
-        // Корневой вью контроллер, с которого строится все приложение
-        let vc = ViewController()
+        // 📚 Создаём корневой контроллер — TabBar с нашими вкладками.
+        //    Всё приложение строится от этого контроллера.
+        let tabBarController = MainTabBarController()
         
-        window.rootViewController = vc
+        window.rootViewController = tabBarController
         self.window = window
         
         // 📚 makeKeyAndVisible() — делает окно:
