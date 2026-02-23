@@ -66,10 +66,16 @@ final class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "person"),
             selectedImage: UIImage(systemName: "person.fill")
         )
-        
+        let applicationVC = ApplicationVC(houseName: "Заявка", totalPrice: 0)
+        let applicationNav = UINavigationController(rootViewController: applicationVC)
+        applicationNav.tabBarItem = UITabBarItem(
+            title: "Заявка",
+            image: UIImage(systemName: "pencil"),
+            selectedImage: UIImage(systemName: "pencil.fill")
+        )
         // 📚 Устанавливаем массив дочерних контроллеров.
         //    Порядок в массиве = порядок вкладок слева направо.
-        viewControllers = [favoritesNav, compareNav, profileNav]
+        viewControllers = [favoritesNav, compareNav, profileNav, applicationNav]
     }
     
     // =========================================================================
