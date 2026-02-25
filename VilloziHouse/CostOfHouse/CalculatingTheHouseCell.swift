@@ -9,7 +9,7 @@ import UIKit
 
 class CalculatingTheHouseCell: UITableViewCell {
     
-    static let reuseId = "CalculatingTheHouseCell"
+    static let identifier = "CalculatingTheHouseCell"
     
     private let nameMaterialLabel: UILabel = {
         let label = UILabel()
