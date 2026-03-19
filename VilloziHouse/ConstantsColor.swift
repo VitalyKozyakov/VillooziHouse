@@ -16,7 +16,7 @@ enum ConstantsColor {
     static let colorBackgroundSelected = UIColor(named: "#FF0000")
     static let colorBorderSelected = UIColor(named: "#FF0000")
     static let colorBackgroundLabel = UIColor(named: "#D9B08C")
-    static let colorTextField = UIColor(named: "#ffbd88")
+    static let colorTextField = UIColor.systemGray6
     static let colorLoadingIndicator = UIColor(named: "#FFCB9A")
     static let colorError: UIColor = .red
     static let colorButton = UIColor(named: "#14bdff")

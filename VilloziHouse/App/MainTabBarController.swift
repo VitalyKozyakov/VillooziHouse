@@ -32,13 +32,13 @@ final class MainTabBarController: UITabBarController {
         //    • Возможность push/pop между экранами
         
         // Вкладка 1: Каталог проектов
-        //        let catalogVC = HouseListViewController()
-//        let catalogNav = UINavigationController(rootViewController: catalogVC)
-//        catalogNav.tabBarItem = UITabBarItem(
-//            title: "Проекты",
-//            image: UIImage(systemName: "house"),
-//            selectedImage: UIImage(systemName: "house.fill")
-//        )
+                let catalogVC = CalculatingTheHouse()
+        let catalogNav = UINavigationController(rootViewController: catalogVC)
+        catalogNav.tabBarItem = UITabBarItem(
+            title: "Проекты",
+            image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill")
+        )
         
         // Вкладка 2: Избранное (заглушка)
         let favoritesVC = PlaceholderViewController(title: "Избранное", icon: "heart")
@@ -75,7 +75,7 @@ final class MainTabBarController: UITabBarController {
         )
         // 📚 Устанавливаем массив дочерних контроллеров.
         //    Порядок в массиве = порядок вкладок слева направо.
-        viewControllers = [favoritesNav, compareNav, profileNav, applicationNav]
+        viewControllers = [catalogNav, favoritesNav, compareNav, profileNav, applicationNav]
     }
     
     // =========================================================================

@@ -300,10 +300,10 @@ final class ApplicationViewController: UIViewController {
     }
 
     private func setupConstraints() {
-        let nameLabel1 = nameImage(nameImage: "manager1", nameLabel: "Vitaliy")
-        let nameLabel2 = nameImage(nameImage: "manager2", nameLabel: "Roman")
-        contentView.addSubview(nameLabel1)
-        contentView.addSubview(nameLabel2)
+//        let nameLabel1 = nameImage(nameImage: "manager1", nameLabel: "Vitaliy")
+//        let nameLabel2 = nameImage(nameImage: "manager2", nameLabel: "Roman")
+//        contentView.addSubview(nameLabel1)
+//        contentView.addSubview(nameLabel2)
         
         NSLayoutConstraint.activate([
             // ScrollView
@@ -350,18 +350,18 @@ final class ApplicationViewController: UIViewController {
             submitButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             submitButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             submitButton.heightAnchor.constraint(equalToConstant: 54),
-//            submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
+            submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
             
-            nameLabel1.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: 16),
-            nameLabel1.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            nameLabel1.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            nameLabel1.heightAnchor.constraint(equalToConstant: 50),
-            
-            nameLabel2.topAnchor.constraint(equalTo: nameLabel1.bottomAnchor, constant: 16),
-            nameLabel2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            nameLabel2.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            nameLabel2.heightAnchor.constraint(equalToConstant: 50),
-            nameLabel2.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
+//            nameLabel1.topAnchor.constraint(equalTo: submitButton.bottomAnchor, constant: 16),
+//            nameLabel1.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+//            nameLabel1.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+//            nameLabel1.heightAnchor.constraint(equalToConstant: 50),
+//            
+//            nameLabel2.topAnchor.constraint(equalTo: nameLabel1.bottomAnchor, constant: 16),
+//            nameLabel2.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+//            nameLabel2.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+//            nameLabel2.heightAnchor.constraint(equalToConstant: 50),
+//            nameLabel2.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
 
             // Экран успеха — поверх всего
             successView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -699,10 +699,9 @@ extension ApplicationViewController {
         }
         let result = add(5, to: 3)  // вызов: add(5, to: 3)
         
-        
-        
-        
         let vitaliyStackView = nameImage(nameImage: "vitaliy", nameLabel: "Виталий")
+        
+        
         
         func makeAvatarView1(systemName: String, color: UIColor) -> UIView {
             let container = UIView()
@@ -761,3 +760,167 @@ extension ApplicationViewController {
         return stackView
     }
 }
+
+
+extension ApplicationViewController {
+    func classes() {
+        class BankAccount {
+            var balance: Int = 0
+            var addressUser: String
+            var codeWord: String
+            
+            init(balance: Int = 0, addressUser: String, codeWord: String) {
+                self.balance = balance
+                self.addressUser = addressUser
+                self.codeWord = codeWord
+            }
+            
+            func deposit(_ amount: Int) {
+                balance += amount
+            }
+            
+            func withdraw(_ amount: Int) -> Bool {
+                guard amount <= balance else { return false }
+                balance -= amount
+                return true
+            }
+        }
+        
+        let vitaliyAccount = BankAccount(addressUser: "Sochi", codeWord: "Bobik")
+        
+        func deposit(account: BankAccount) {
+            account.balance += 100
+        }
+        
+        deposit(account: vitaliyAccount)
+        
+        print(vitaliyAccount.balance) // 100
+        
+        let romanAccount = vitaliyAccount
+        romanAccount.balance = 0
+        
+        print(vitaliyAccount.balance) // 0
+        
+        
+        // Vehicle
+        
+        class Vehicle {
+            func move() {
+                print("Moving...")
+            }
+        }
+        
+        class Car: Vehicle {
+            var numberOfDoors: Int
+            
+            init(numberOfDoors: Int) {
+                self.numberOfDoors = numberOfDoors
+            }
+            
+            func openTrunk() {
+                print("Trunk is opened")
+            }
+        }
+        
+        class Motocross: Vehicle {
+            func doKickflip() {
+                print("Kickflipping!")
+            }
+        }
+    }
+    
+    func structs() {
+        struct User {
+            var name: String
+            var age: Int
+        }
+        
+        let userVitaliy = User(name: "Vitaliy", age: 30)
+        var userRoman = userVitaliy
+        userRoman.name = "Roman"
+        
+        print(userVitaliy.name)
+        print(userRoman.name)   
+    }
+    
+    func closures() {
+        func greet(_ name: String) -> String {
+            "Hello, \(name)!"
+        }
+        
+        _ = greet("Vitaliy")
+        
+        let anotherGreet: (String) -> String = { name in
+            "Hello, \(name)!"
+        }
+        
+        _ = anotherGreet("Vitaliy")
+        
+        let multiply: (Int, Int) -> Int = { a, b in
+            a * b
+        }
+        
+        _ = multiply(2, 3)
+        
+        
+        // Функция принимает замыкание — "что делать после загрузки"
+        func loadMenu(completion: ([String]) -> Void) {
+            // Имитируем загрузку данных
+            let items = ["Капучино", "Латте", "Американо"]
+            completion(items)  // вызываем замыкание с результатом
+        }
+
+        // Использование — trailing closure синтаксис
+        loadMenu { items in
+            print("Загружено позиций: \(items.count)")
+        }
+        
+        // ❌ Не скомпилируется — замыкание вызывается позже, но не помечено @escaping
+//        func loadMenuAsync(completion: ([String]) -> Void) {
+//            DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+//                completion([])  // ❌ Ошибка: "escaping closure captures non-escaping parameter"
+//            }
+//        }
+        
+        // ✅ Правильно — @escaping говорит компилятору: "это замыкание вызовется позже"
+        func loadMenuAsync(completion: @escaping ([String]) -> Void) {
+            let items = ["Капучино", "Латте", "Американо"]
+            let items1 = items.filter { $0 == "Kapuchino" }
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+                completion([])  // ✅ всё хорошо
+            }
+        }
+        
+        class Cart {
+            
+            var onUpdated: (() -> Void)?
+            
+            private(set) var items: [String] = []
+            
+            func addItem(_ item: String) {
+                items.append(item)
+                onUpdated?()  // ? — безопасный вызов: если nil, ничего не происходит
+            }
+            
+            func removeItem(at index: Int) {
+                items.remove(at: index)
+                onUpdated?()
+            }
+        }
+        
+        let vitaliyCart = Cart()
+        vitaliyCart.addItem("Cucumber")
+        vitaliyCart.addItem("Tomato")
+        vitaliyCart.addItem("Milk")
+        vitaliyCart.removeItem(at: 0)
+        
+        vitaliyCart.onUpdated = {
+            print("Card updated!")
+            // tableView.reloadData()
+            // cartPriceSum = cartPriceSum + item.price
+        }
+    }
+    
+    
+}
+
