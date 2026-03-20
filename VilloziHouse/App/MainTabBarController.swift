@@ -32,7 +32,7 @@ final class MainTabBarController: UITabBarController {
         //    • Возможность push/pop между экранами
         
         // Вкладка 1: Каталог проектов
-                let catalogVC = CalculatingTheHouse()
+                let catalogVC = CalculatingTheHouseViewController()
         let catalogNav = UINavigationController(rootViewController: catalogVC)
         catalogNav.tabBarItem = UITabBarItem(
             title: "Проекты",
