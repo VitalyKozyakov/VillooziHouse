@@ -7,12 +7,32 @@
 
 import UIKit
 
+// 1. Поправить отступы у картинок, чтобы было ближе к дизайну - сделано X
+// 2. Поправить лейбл с ценой ?
+// 3. Привести к дизайну кнопку "Отправить заявку"- сделано X
+// 4. Привести к дизайну текстовые поля и отступы между ними- сделано X
+// 5. Реализовать экран успешной заявки- сделано X
+// 6. Просмотреть еще раз организацию моделей ячеек с видами материалов
+// 7. Посчитать и выводить итоговую сумму за все материалы в зависимости от выбранный опций- сделано (50/50) Суммирование с инженеркой
+// 8. Создать еще один массив секций с инженерией и при выборе сегмента обновлять массив секций. Х
+// 9. Марки и организация файла текущего
+// 10. Задания в телеграмме
+// 11. Доделать сумму заявки перед отправкой
+// 12. Сделать коммит и залить на сервер
+// 13. сделать пул-реквест в мэин
+// 14. Экран выбора дома
+// 15. Поделить по папка по смыслу, переименость sceen
+
+protocol PriceUpdaterDelegate: AnyObject {
+    func didUpdateTotalPrice(_ price: Double, formattedPrice: String)
+}
+
 final class ApplicationVC: UIViewController {
-    
-    private let constColor = ConstantsColor.self
+    weak var delegate: PriceUpdaterDelegate?
     
     private var houseName: String = ""
     private var totalPrice: Int = 0
+    var receivedPrice: String = ""
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -39,7 +59,10 @@ final class ApplicationVC: UIViewController {
     private let nameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Ваше имя"
+        textField.backgroundColor = ConstantsColor.colorTextField
         textField.borderStyle = .roundedRect
+        textField.clipsToBounds = true
+        textField.layer.cornerRadius = 12
         textField.font = .systemFont(ofSize: 16)
         textField.returnKeyType = .next
         textField.autocorrectionType = .no
@@ -51,15 +74,31 @@ final class ApplicationVC: UIViewController {
     private let phoneTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "+7 (123) 456 78 90"
+        textField.backgroundColor = ConstantsColor.colorTextField
         textField.borderStyle = .roundedRect
+        textField.clipsToBounds = true
+        textField.layer.cornerRadius = 12
         textField.font = .systemFont(ofSize: 16)
         textField.keyboardType = .phonePad
         textField.returnKeyType = .done
         textField.textColor = ConstantsColor.colorBackground
         textField.translatesAutoresizingMaskIntoConstraints = false
-        
         return textField
     }()
+    
+    private let emailTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "example@mail.ru"
+        textField.backgroundColor = ConstantsColor.colorTextField
+        textField.keyboardType = .emailAddress
+        textField.returnKeyType = .done
+        textField.borderStyle = .roundedRect
+        textField.clipsToBounds = true
+        textField.layer.cornerRadius = 12
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }()
+    
     
     private let consentStackView: UIStackView = {
         let stackView = UIStackView()
@@ -91,9 +130,9 @@ final class ApplicationVC: UIViewController {
     private let submitButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Отправить заявку", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        button.setTitleColor(.red, for: .normal)
-        button.backgroundColor = UIColor(named: "#10e161")
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .semibold)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 12
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -102,12 +141,16 @@ final class ApplicationVC: UIViewController {
     private let priceLabel: UILabel = {
         let label = UILabel()
         label.text = "Цена: 14 000 000 ₽"
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.font = .systemFont(ofSize: 22, weight: .semibold)
         label.textColor = .secondaryLabel
         label.textAlignment = .center
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    
     
     //    ============
     //    Экран успеха
@@ -159,6 +202,7 @@ final class ApplicationVC: UIViewController {
         button.setTitleColor(ConstantsColor.colorButton, for: .normal)
         button.backgroundColor = UIColor(named: "#10e161")
         button.layer.cornerRadius = 12
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -183,6 +227,27 @@ final class ApplicationVC: UIViewController {
         setupUI()
         setupKeyboardHandling()
         view.backgroundColor = .systemBackground
+        priceLabel.text = receivedPrice
+        
+        emailTextField.addTarget(self, action: #selector(emailTextFieldDidChange), for: .editingChanged)
+    }
+    
+    @objc func emailTextFieldDidChange() {
+        if let email = emailTextField.text, !email.isEmpty {
+            if isValidEmail(email) {
+                emailTextField.backgroundColor = ConstantsColor.colorTextSelected
+                emailTextField.layer.borderColor = UIColor.clear.cgColor
+                emailTextField.layer.borderWidth = 0
+            } else {
+                emailTextField.backgroundColor = UIColor.red.withAlphaComponent(0.1)
+                emailTextField.layer.borderColor = UIColor.red.cgColor
+                emailTextField.layer.borderWidth = 1
+            }
+        } else {
+            emailTextField.backgroundColor = ConstantsColor.colorTextField
+            emailTextField.layer.borderColor = UIColor.clear.cgColor
+            emailTextField.layer.borderWidth = 0
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -211,15 +276,22 @@ final class ApplicationVC: UIViewController {
         title = "Заявка на расчет"
         navigationItem.largeTitleDisplayMode = .never
     }
+    func didUpdateTotalPrice(_ price: Double, formattedPrice: String) {
+            DispatchQueue.main.async { [weak self] in
+                self?.priceLabel.text = "Цена: \(formattedPrice)"
+            }
+        }
+    
     private func setupUI() {
+        avatarsStackView.spacing = 12
+        avatarsStackView.distribution = .fill
+        avatarsStackView.alignment = .center
         let avatar1 = makeAvatarView(named: "manager1", color: .systemBlue)
-        let avatar2 = makeAvatarView(named: "manager2", color: .systemRed)
         let avatar3 = makeAvatarView(named: "manager3", color: .systemYellow)
-        let avatar4 = makeAvatarView(named: "manager2", color: .systemGreen)
-        let avatar5 = makeAvatarView(named: "manager2", color: .systemOrange)
-        let avatar6 = makeAvatarView(named: "manager2", color: .systemGray)
+        let avatar4 = makeAvatarView(named: "manager4", color: .systemGreen)
+        let avatar5 = makeAvatarView(named: "manager5", color: .systemOrange)
+        let avatar6 = makeAvatarView(named: "manager6", color: .systemGray)
         avatarsStackView.addArrangedSubview(avatar1)
-        avatarsStackView.addArrangedSubview(avatar2)
         avatarsStackView.addArrangedSubview(avatar3)
         avatarsStackView.addArrangedSubview(avatar4)
         avatarsStackView.addArrangedSubview(avatar5)
@@ -234,9 +306,12 @@ final class ApplicationVC: UIViewController {
         let priceStr = formatter.string(from: NSNumber(value: totalPrice)) ?? "\(totalPrice)"
         priceLabel.text = "Предварительная стоимость дома: \(priceStr) ₽"
         
+        
+        
         contentView.addSubview(avatarsStackView)
         contentView.addSubview(nameTextField)
         contentView.addSubview(phoneTextField)
+        contentView.addSubview(emailTextField)
         contentView.addSubview(consentStackView)
         contentView.addSubview(priceLabel)
         contentView.addSubview(submitButton)
@@ -261,14 +336,16 @@ final class ApplicationVC: UIViewController {
     private func makeAvatarView(named name: String, color: UIColor) -> UIView {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
-        container.widthAnchor.constraint(equalToConstant: 56).isActive = true
-        container.heightAnchor.constraint(equalToConstant: 56).isActive = true
+        let avatarSize: CGFloat = 64
+        container.widthAnchor.constraint(equalToConstant: avatarSize).isActive = true
+        container.heightAnchor.constraint(equalToConstant: avatarSize).isActive = true
         
         let iv = UIImageView()
-        let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
         iv.image = UIImage(named: name)
         iv.tintColor = color
-        iv.contentMode = .scaleAspectFit
+        iv.contentMode = .scaleAspectFill
+        iv.clipsToBounds = true
+        iv.layer.cornerRadius = avatarSize / 2
         iv.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(iv)
         
@@ -295,20 +372,27 @@ final class ApplicationVC: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
-            avatarsStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 48),
+            avatarsStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 36),
             avatarsStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            avatarsStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 12),
+            avatarsStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             
-            nameTextField.topAnchor.constraint(equalTo: avatarsStackView.bottomAnchor, constant: 32),
+            nameTextField.topAnchor.constraint(equalTo: avatarsStackView.bottomAnchor, constant: 28),
             nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             nameTextField.heightAnchor.constraint(equalToConstant: 50),
             
-            phoneTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 32),
+            phoneTextField.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 12),
             phoneTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             phoneTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             phoneTextField.heightAnchor.constraint(equalToConstant: 50),
             
-            consentStackView.topAnchor.constraint(equalTo: phoneTextField.bottomAnchor, constant: 16),
+            emailTextField.topAnchor.constraint(equalTo: phoneTextField.bottomAnchor, constant: 12),
+            emailTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            emailTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            emailTextField.heightAnchor.constraint(equalToConstant: 50),
+            
+            consentStackView.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 16),
             consentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             consentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
@@ -379,7 +463,20 @@ final class ApplicationVC: UIViewController {
             showValidationError("Введите корректный номер телефона")
             return false
         }
+        guard let email = emailTextField.text?.trimmingCharacters(in: .whitespaces), !email.isEmpty else {
+            showValidationError("Введите корректный e-mail (например: name@domain.com)")
+            return false
+        }
+        guard isValidEmail(email) else {
+            showValidationError("Введите корректный e-mail")
+            return false
+        }
         return true
+    }
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: email)
     }
     
     private func showValidationError(_ message: String) {
@@ -444,7 +541,9 @@ extension ApplicationVC: UITextFieldDelegate {
             textField.layer.borderWidth = 0
         }
     }
+    
 }
+
 
 #Preview {
     let vc = ApplicationVC(houseName: "60-23 Виллози-дом", totalPrice: 1_630_908)
