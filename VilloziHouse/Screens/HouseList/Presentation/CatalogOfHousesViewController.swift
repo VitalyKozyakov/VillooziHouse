@@ -7,51 +7,14 @@
 
 import UIKit
 
-class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, HouseCellDelegate {
-    func didToggleFavorite(in cell: CatalogOfHousesCell, state: Bool) {
-        
-    }
-    private func saveFavoriteStatus(for houseId: String, isFavorite: Bool) {
-        var favorites = UserDefaults.standard.array(forKey: "favoriteHouses") as? [String] ?? []
-        
-        if isFavorite {
-            if !favorites.contains(houseId) {
-                favorites.append(houseId)
-            }
-        } else {
-            favorites.removeAll { $0 == houseId }
-        }
-        
-        UserDefaults.standard.set(favorites, forKey: "favoriteHouses")
-    }
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return allSections.count + 1
-    }
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        if row == 0 {
-            return "Все проекты"
-        }
-        return allSections[row - 1].named
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        if row == 0 {
-            pickerTextField.text = "🔍 Все проекты"
-        } else {
-            pickerTextField.text = "🔍 \(allSections[row - 1].named)"
-        }
-        filterSections(selectedIndex: row)
-    }
-    
+class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
+    // MARK: - Private properties
     
     private let dataSourse = CatalogOfHousesDataSourse()
-    private var allSections: [CatalogOfHousesDataSourse.HouseProject] = []
-    private var filteredSections: [CatalogOfHousesDataSourse.HouseProject] = []
+    private var allSections: [HouseProject] = []
+    private var filteredSections: [HouseProject] = []
+    
+    // MARK: - UI
     
     private var tableView = UITableView()
     private let pickerView = UIPickerView()
@@ -72,6 +35,9 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
         setupTableView()
         loadData()
     }
+    
+    // MARK: - Setup view
+    
     private func setupViewController() {
         title = "Каталог домов"
         view.backgroundColor = .systemBackground
@@ -85,7 +51,6 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
         tableView = UITableView(frame: view.bounds, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableView.register(CatalogOfHousesCell.self, forCellReuseIdentifier: CatalogOfHousesCell.reuseIdentifier)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemBackground
@@ -93,11 +58,9 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
         view.addSubview(pickerTextField)
         pickerTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        if #available(iOS 15.0, *) {
-                tableView.sectionHeaderTopPadding = 0
-            
-            tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 10, right: 40)
-            }
+        tableView.sectionHeaderTopPadding = 0
+        
+        tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 10, right: 40)
         
         NSLayoutConstraint.activate([
             pickerTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -118,21 +81,8 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
-    private func makeToolbar() -> UIToolbar {
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        
-        let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let done = UIBarButtonItem(title: "Готово", style: .done, target: self, action: #selector(handleDone))
-        toolbar.items = [flexible, done]
-        return toolbar
-    }
-    @objc private func handleDone() {
-        pickerTextField.resignFirstResponder()
-    }
-    @objc private func dismissPicker() {
-        pickerTextField.resignFirstResponder()
-    }
+    
+    // MARK: - Private methods
     
     private func loadData() {
         allSections = dataSourse.getHouse()
@@ -155,9 +105,46 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         }
     }
-    // MARK: - UITableViewDataSource
+    
+    func didToggleFavorite(in cell: CatalogOfHousesCell, state: Bool) {
+        
+    }
+    private func saveFavoriteStatus(for houseId: String, isFavorite: Bool) {
+        var favorites = UserDefaults.standard.array(forKey: "favoriteHouses") as? [String] ?? []
+        
+        if isFavorite {
+            if !favorites.contains(houseId) {
+                favorites.append(houseId)
+            }
+        } else {
+            favorites.removeAll { $0 == houseId }
+        }
+        
+        UserDefaults.standard.set(favorites, forKey: "favoriteHouses")
+    }
     
     
+    //  MARK: - Keyboard
+    
+    private func makeToolbar() -> UIToolbar {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        
+        let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done = UIBarButtonItem(title: "Готово", style: .done, target: self, action: #selector(handleDone))
+        toolbar.items = [flexible, done]
+        return toolbar
+    }
+    @objc private func handleDone() {
+        pickerTextField.resignFirstResponder()
+    }
+    @objc private func dismissPicker() {
+        pickerTextField.resignFirstResponder()
+    }
+    
+}
+// MARK: - UITableViewDataSource, UITableViewDelegate
+extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         let sectionsCount = filteredSections.count
@@ -167,8 +154,8 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard section < filteredSections.count else { return 0
         }
-                
-                let rowsCount = filteredSections[section].house.count
+        
+        let rowsCount = filteredSections[section].house.count
         return rowsCount
     }
     
@@ -222,14 +209,6 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
         footerView.backgroundColor = .clear
         return footerView
     }
-    
-    // MARK: - UITableViewDelegate
-    //    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-    //            let footerView = UIView()
-    //            footerView.backgroundColor = .clear
-    //            return footerView
-    //        }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
@@ -241,21 +220,44 @@ class CatalogOfHousesView: UIViewController, UITableViewDataSource, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.section < filteredSections.count,
-                 indexPath.row < filteredSections[indexPath.section].house.count else {
+              indexPath.row < filteredSections[indexPath.section].house.count else {
             return
-    }
+        }
         let house = filteredSections[indexPath.section].house[indexPath.row]
-    
+        
         let calculatingVC = CalculatingTheHouseViewController()
         
-                navigationController?.pushViewController(calculatingVC, animated: true)
-        }
-    // MARK: - HouseCellDelegate
-    
+        navigationController?.pushViewController(calculatingVC, animated: true)
+    }
 }
+// MARK: - UIPickerViewDelegate, UIPickerViewDataSource
 
+extension CatalogOfHousesViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return allSections.count + 1
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        if row == 0 {
+            return "Все проекты"
+        }
+        return allSections[row - 1].named
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if row == 0 {
+            pickerTextField.text = "🔍 Все проекты"
+        } else {
+            pickerTextField.text = "🔍 \(allSections[row - 1].named)"
+        }
+        filterSections(selectedIndex: row)
+    }
+}
 #Preview(traits: .portrait) {
-    let homeVC = CatalogOfHousesView()
+    let homeVC = CatalogOfHousesViewController()
     let navigationController = UINavigationController(rootViewController: homeVC)
     return navigationController
 }

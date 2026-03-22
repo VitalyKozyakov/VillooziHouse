@@ -7,80 +7,10 @@
 
 import UIKit
 
- class CatalogOfHousesDataSourse {
-       
-    init() {
-        
-    }
+class CatalogOfHousesDataSourse {
     
-    struct HouseProject {
-        enum areaRange: String {
-            case fiftyMetres = "до 50 кв.м."
-            case hundredMetres = "от 50 до 100 кв.м."
-            case hundredFiftyMetres = "от 100 до 150 кв.м."
-            case twoHundredMetres = "от 150 до 200 кв.м."
-            case twoHundredFiftyMetres = "от 200 кв.м. и более"
-            
-            var name: String {
-                switch self {
-                case .fiftyMetres: ""
-                case .hundredMetres: ""
-                case .hundredFiftyMetres: ""
-                case .twoHundredMetres: ""
-                case .twoHundredFiftyMetres: ""
-                }
-            }
-            
-        }
-        
-        let named: String
-        
-        var house: [House]
-        
-        init(named: String, house: [House]) {
-            self.named = named
-            self.house = house
-        }
-    }
-    struct House {
-        let name: String
-        let dimensions: String
-        let area: Double
-        let bedrooms: Int
-        let price: Double
-        let imageProject: String?
-        var isFavorite: Bool = false
-        
-        var areaRange: HouseProject.areaRange {
-                switch area {
-                case ..<50:
-                    return .fiftyMetres
-                case 50..<100:
-                    return .hundredMetres
-                case 100..<150:
-                    return .hundredFiftyMetres
-                case 150..<200:
-                    return .twoHundredMetres
-                default:
-                    return .twoHundredFiftyMetres
-                }
-            }
+    init() {}
     
-    var formattedPrice: String {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .currency
-            formatter.currencySymbol = "₽"
-            formatter.maximumFractionDigits = 0
-            return formatter.string(from: NSNumber(value: price)) ?? "от \(price) ₽"
-        }
-        var formattedArea: String {
-            return String(format: "%.1f", area)
-        }
-        var formattedRooms: String {
-            return "\(bedrooms) комнат"
-        }
-    }
-
     func getHouse() -> [HouseProject] {
         [
             HouseProject(named: "Проекты до 50 кв.м.",house: [
@@ -119,4 +49,4 @@ import UIKit
             ])
         ]
     }
- }
+}

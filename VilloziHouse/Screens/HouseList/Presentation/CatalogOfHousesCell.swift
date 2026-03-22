@@ -26,7 +26,7 @@ final class CatalogOfHousesCell: UITableViewCell {
     
     private let nameHouseLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textAlignment = .center
         label.clipsToBounds = true
         label.layer.cornerRadius = 12
@@ -81,48 +81,48 @@ final class CatalogOfHousesCell: UITableViewCell {
             contentView.addSubview($0)
         }
     }
-
+    
     private let favoriteButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "suit.heart"), for: .normal)
         button.tintColor = .systemGreen
         return button
     }()
-
-
+    
+    
     @objc private func favoriteTapped() {
         let currentState = favoriteButton.imageView?.image == UIImage(systemName: "heart.fill")
-            let newState = !currentState
-            delegate?.didToggleFavorite(in: self, state: newState)
-            updateFavoriteButton(isFavorite: newState)
-        }
+        let newState = !currentState
+        delegate?.didToggleFavorite(in: self, state: newState)
+        updateFavoriteButton(isFavorite: newState)
+    }
     
-        func configure(with house: CatalogOfHousesDataSourse.House) {
-            nameHouseLabel.text = house.name
-            squareLabel.text = "📐 \(house.formattedArea) м²"
-            infoHouseLabel.text = " \(house.formattedRooms) | \(house.dimensions)"
-            priceHouseLabel.text = house.formattedPrice
-            updateFavoriteButton(isFavorite: house.isFavorite)
-            imageViewHouse.image = UIImage(systemName: "project2424")
+    func configure(with house: House) {
+        nameHouseLabel.text = house.name
+        squareLabel.text = "📐 \(house.formattedArea) м²"
+        infoHouseLabel.text = " \(house.formattedRooms) | \(house.dimensions)"
+        priceHouseLabel.text = house.formattedPrice
+        updateFavoriteButton(isFavorite: house.isFavorite)
+        imageViewHouse.image = UIImage(systemName: "project2424")
+        imageViewHouse.tintColor = .systemGray3
+        imageViewHouse.contentMode = .center
+        imageViewHouse.backgroundColor = .systemGray6
+        
+        if let image = UIImage(named: house.imageProject ?? "") {
+            imageViewHouse.image = image
+            imageViewHouse.contentMode = .scaleAspectFill
+            imageViewHouse.backgroundColor = .clear
+        } else {
+            imageViewHouse.image = UIImage(systemName: "house.fill")
             imageViewHouse.tintColor = .systemGray3
             imageViewHouse.contentMode = .center
             imageViewHouse.backgroundColor = .systemGray6
-            
-            if let image = UIImage(named: house.imageProject ?? "") {
-                    imageViewHouse.image = image
-                    imageViewHouse.contentMode = .scaleAspectFill
-                    imageViewHouse.backgroundColor = .clear
-                } else {
-                    imageViewHouse.image = UIImage(systemName: "house.fill")
-                    imageViewHouse.tintColor = .systemGray3
-                    imageViewHouse.contentMode = .center
-                    imageViewHouse.backgroundColor = .systemGray6
-                }
         }
+    }
     private func updateFavoriteButton(isFavorite: Bool) {
-            let imageName = isFavorite ? "heart.fill" : "heart"
-            favoriteButton.setImage(UIImage(systemName: imageName), for: .normal)
-        }
+        let imageName = isFavorite ? "heart.fill" : "heart"
+        favoriteButton.setImage(UIImage(systemName: imageName), for: .normal)
+    }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
@@ -137,7 +137,7 @@ final class CatalogOfHousesCell: UITableViewCell {
             nameHouseLabel.topAnchor.constraint(equalTo: imageViewHouse.bottomAnchor, constant: 8),
             nameHouseLabel.leadingAnchor.constraint(equalTo: imageViewHouse.leadingAnchor),
             nameHouseLabel.trailingAnchor.constraint(equalTo: imageViewHouse.trailingAnchor),
-
+            
             squareLabel.topAnchor.constraint(equalTo: nameHouseLabel.bottomAnchor, constant: 4),
             squareLabel.leadingAnchor.constraint(equalTo: imageViewHouse.leadingAnchor),
             squareLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
@@ -161,6 +161,6 @@ final class CatalogOfHousesCell: UITableViewCell {
     }
 }
 #Preview {
-    let viewController = CatalogOfHousesView()
+    let viewController = CatalogOfHousesViewController()
     return viewController
 }
