@@ -80,12 +80,12 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "6",
                     title: "Материалы, улучшающие теплоизоляцию и герметичность дома:",
-                    deltaRub: 42748, isDefaultSelected: false
+                    deltaRub: 42748, isDefaultSelected: true
                 ),
                 FinishingOption(
                     id: "7",
                     title: "Профессиональный монтаж:",
-                    deltaRub: 525372, isDefaultSelected: false
+                    deltaRub: 525372, isDefaultSelected: true
                 ),
                 FinishingOption(
                     id: "8",
@@ -95,7 +95,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "9",
                     title: "Бытовка, снегозадержетели, доставка, биотуалет, укрывные тенты, подкладные доски, временная лестница:",
-                    deltaRub: 90000.00, isDefaultSelected: false
+                    deltaRub: 90000.00, isDefaultSelected: true
                 ),
             ]
         ),Category(
@@ -105,7 +105,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Металлочерепица",
-                    deltaRub: 378793, isDefaultSelected: true
+                    deltaRub: 378793, isDefaultSelected: false
                 ),FinishingOption(
                     id: "2",
                     title: "Фальцевая кровля",
@@ -117,7 +117,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 ),FinishingOption(
                     id: "4",
                     title: "Битумная черепица",
-                    deltaRub: 469722, isDefaultSelected: true
+                    deltaRub: 469722, isDefaultSelected: false
                 ),FinishingOption(
                     id: "5",
                     title: "Профнастил кровельный",
@@ -131,11 +131,11 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Вентиляционные элементы Vilpe. Количество по проекту",
-                    deltaRub: 79947, isDefaultSelected: true
+                    deltaRub: 79947, isDefaultSelected: false
                 ),FinishingOption(
                     id: "2",
                     title: "Водосточная система",
-                    deltaRub: 105260, isDefaultSelected: true
+                    deltaRub: 105260, isDefaultSelected: false
                 )
             ]
         ),Category(
@@ -173,19 +173,19 @@ final class CalculatingTheHouseViewController: UIViewController {
                 ),FinishingOption(
                     id: "8",
                     title: "Фальц",
-                    deltaRub: 752975, isDefaultSelected: true
+                    deltaRub: 752975, isDefaultSelected: false
                 ),FinishingOption(
                     id: "9",
                     title: "Металлический сайдинг",
-                    deltaRub: 678633, isDefaultSelected: true
+                    deltaRub: 678633, isDefaultSelected: false
                 ),FinishingOption(
                     id: "10",
                     title: "Клинкерные термопанели",
-                    deltaRub: 450112, isDefaultSelected: true
+                    deltaRub: 450112, isDefaultSelected: false
                 ),FinishingOption(
                     id: "11",
                     title: "Консервация фасада",
-                    deltaRub: 68922, isDefaultSelected: true
+                    deltaRub: 68922, isDefaultSelected: false
                 ),
             ]
         ),Category(
@@ -195,7 +195,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Виниловая J-фаска",
-                    deltaRub: 42732, isDefaultSelected: true
+                    deltaRub: 42732, isDefaultSelected: false
                 ),FinishingOption(
                     id: "2",
                     title: "Металлическая L-планка",
@@ -217,7 +217,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 ),FinishingOption(
                     id: "2",
                     title: "Фиброцементный сайдинг",
-                    deltaRub: 167624, isDefaultSelected: true
+                    deltaRub: 167624, isDefaultSelected: false
                 ),FinishingOption(
                     id: "3",
                     title: "Дерево",
@@ -225,7 +225,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 ),FinishingOption(
                     id: "4",
                     title: "Металлические софиты",
-                    deltaRub: 107667, isDefaultSelected: true
+                    deltaRub: 107667, isDefaultSelected: false
                 )
             ]
         ),Category(
@@ -268,7 +268,7 @@ final class CalculatingTheHouseViewController: UIViewController {
             ),FinishingOption(
                 id: "1",
                 title: "Террасная доска искусственная (ДПК)",
-                deltaRub: 349796, isDefaultSelected: true
+                deltaRub: 349796, isDefaultSelected: false
             ),
             ]
         )
@@ -279,12 +279,12 @@ final class CalculatingTheHouseViewController: UIViewController {
             title: "Отопление",
             selectionType: .single,
             options: [
-                FinishingOption(id: "h1", title: "Электрический котел", deltaRub: 85000, isDefaultSelected: true),
-                FinishingOption(id: "h2", title: "Газовый котел", deltaRub: 120000, isDefaultSelected: true),
-                FinishingOption(id: "h3", title: "Твердотопливный котел", deltaRub: 95000, isDefaultSelected: true),
-                FinishingOption(id: "h4", title: "Тепловой насос", deltaRub: 350000, isDefaultSelected: true),
-                FinishingOption(id: "h5", title: "Радиаторы отопления", deltaRub: 89000, isDefaultSelected: true),
-                FinishingOption(id: "h6", title: "Теплый пол водяной", deltaRub: 145000, isDefaultSelected: true)
+                FinishingOption(id: "h1", title: "Электрический котел", deltaRub: 85000, isDefaultSelected: false),
+                FinishingOption(id: "h2", title: "Газовый котел", deltaRub: 120000, isDefaultSelected: false),
+                FinishingOption(id: "h3", title: "Твердотопливный котел", deltaRub: 95000, isDefaultSelected: false),
+                FinishingOption(id: "h4", title: "Тепловой насос", deltaRub: 350000, isDefaultSelected: false),
+                FinishingOption(id: "h5", title: "Радиаторы отопления", deltaRub: 89000, isDefaultSelected: false),
+                FinishingOption(id: "h6", title: "Теплый пол водяной", deltaRub: 145000, isDefaultSelected: false)
             ]
         ),
         Category(
@@ -297,7 +297,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(id: "w4", title: "Водонагреватель", deltaRub: 55000, isDefaultSelected: false),
                 FinishingOption(id: "w5", title: "Трубы ХВС", deltaRub: 67000, isDefaultSelected: false),
                 FinishingOption(id: "w6", title: "Трубы ГВС", deltaRub: 67000, isDefaultSelected: false),
-                FinishingOption(id: "w7", title: "Коллектор водоснабжения", deltaRub: 28000, isDefaultSelected: true)
+                FinishingOption(id: "w7", title: "Коллектор водоснабжения", deltaRub: 28000, isDefaultSelected: false)
             ]
         ),
         Category(
@@ -314,22 +314,22 @@ final class CalculatingTheHouseViewController: UIViewController {
             title: "Электрика",
             selectionType: .multiple,
             options: [
-                FinishingOption(id: "e1", title: "Вводной щиток", deltaRub: 35000, isDefaultSelected: true),
-                FinishingOption(id: "e2", title: "Кабель силовой", deltaRub: 89000, isDefaultSelected: true),
-                FinishingOption(id: "e3", title: "Розетки и выключатели", deltaRub: 45000, isDefaultSelected: true),
-                FinishingOption(id: "e4", title: "Освещение", deltaRub: 67000, isDefaultSelected: true),
-                FinishingOption(id: "e5", title: "Заземление и молниезащита", deltaRub: 55000, isDefaultSelected: true),
-                FinishingOption(id: "e6", title: "Автоматы и УЗО", deltaRub: 28000, isDefaultSelected: true)
+                FinishingOption(id: "e1", title: "Вводной щиток", deltaRub: 35000, isDefaultSelected: false),
+                FinishingOption(id: "e2", title: "Кабель силовой", deltaRub: 89000, isDefaultSelected: false),
+                FinishingOption(id: "e3", title: "Розетки и выключатели", deltaRub: 45000, isDefaultSelected: false),
+                FinishingOption(id: "e4", title: "Освещение", deltaRub: 67000, isDefaultSelected: false),
+                FinishingOption(id: "e5", title: "Заземление и молниезащита", deltaRub: 55000, isDefaultSelected: false),
+                FinishingOption(id: "e6", title: "Автоматы и УЗО", deltaRub: 28000, isDefaultSelected: false)
             ]
         ),
         Category(
             title: "Вентиляция",
             selectionType: .single,
             options: [
-                FinishingOption(id: "v1", title: "Естественная вентиляция", deltaRub: 35000, isDefaultSelected: true),
-                FinishingOption(id: "v2", title: "Приточная вентиляция", deltaRub: 89000, isDefaultSelected: true),
-                FinishingOption(id: "v3", title: "Приточно-вытяжная с рекуперацией", deltaRub: 245000, isDefaultSelected: true),
-                FinishingOption(id: "v4", title: "Воздуховоды", deltaRub: 67000, isDefaultSelected: true)
+                FinishingOption(id: "v1", title: "Естественная вентиляция", deltaRub: 35000, isDefaultSelected: false),
+                FinishingOption(id: "v2", title: "Приточная вентиляция", deltaRub: 89000, isDefaultSelected: false),
+                FinishingOption(id: "v3", title: "Приточно-вытяжная с рекуперацией", deltaRub: 245000, isDefaultSelected: false),
+                FinishingOption(id: "v4", title: "Воздуховоды", deltaRub: 67000, isDefaultSelected: false)
             ]
         ),
         Category(

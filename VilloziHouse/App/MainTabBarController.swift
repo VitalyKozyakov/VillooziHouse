@@ -32,7 +32,7 @@ final class MainTabBarController: UITabBarController {
         //    • Возможность push/pop между экранами
         
         // Вкладка 1: Каталог проектов
-                let catalogVC = CalculatingTheHouseViewController()
+                let catalogVC = CatalogOfHousesView()
         let catalogNav = UINavigationController(rootViewController: catalogVC)
         catalogNav.tabBarItem = UITabBarItem(
             title: "Проекты",
@@ -50,10 +50,10 @@ final class MainTabBarController: UITabBarController {
         )
         
         // Вкладка 3: Сравнение (заглушка)
-        let compareVC = PlaceholderViewController(title: "Сравнение", icon: "square.split.2x1")
+        let compareVC = CalculatingTheHouseViewController()
         let compareNav = UINavigationController(rootViewController: compareVC)
         compareNav.tabBarItem = UITabBarItem(
-            title: "Сравнение",
+            title: "Расчет",
             image: UIImage(systemName: "square.split.2x1"),
             selectedImage: UIImage(systemName: "square.split.2x1.fill")
         )
