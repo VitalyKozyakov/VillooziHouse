@@ -7,21 +7,7 @@
 
 import UIKit
 
-// 1. Поправить отступы у картинок, чтобы было ближе к дизайну - сделано X
-// 2. Поправить лейбл с ценой ?
-// 3. Привести к дизайну кнопку "Отправить заявку"- сделано X
-// 4. Привести к дизайну текстовые поля и отступы между ними- сделано X
-// 5. Реализовать экран успешной заявки- сделано X
-// 6. Просмотреть еще раз организацию моделей ячеек с видами материалов
-// 7. Посчитать и выводить итоговую сумму за все материалы в зависимости от выбранный опций- сделано (50/50) Суммирование с инженеркой
-// 8. Создать еще один массив секций с инженерией и при выборе сегмента обновлять массив секций. Х
-// 9. Марки и организация файла текущего
-// 10. Задания в телеграмме
-// 11. Доделать сумму заявки перед отправкой
-// 12. Сделать коммит и залить на сервер
-// 13. сделать пул-реквест в мэин
-// 14. Экран выбора дома
-// 15. Поделить по папка по смыслу, переименость sceen
+
 
 protocol PriceUpdaterDelegate: AnyObject {
     func didUpdateTotalPrice(_ price: Double, formattedPrice: String)
@@ -31,7 +17,7 @@ final class ApplicationVC: UIViewController {
     weak var delegate: PriceUpdaterDelegate?
     
     private var houseName: String = ""
-    private var totalPrice: Int = 0
+    private var totalPrice: Double = 0
     var receivedPrice: String = ""
     
     private let scrollView: UIScrollView = {
@@ -146,6 +132,7 @@ final class ApplicationVC: UIViewController {
         label.textAlignment = .center
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
+        label.layer.backgroundColor = .init(red: 1, green: 1, blue: 1, alpha: 1)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -208,10 +195,11 @@ final class ApplicationVC: UIViewController {
     }()
     //    ===========
     
-    init(houseName: String, totalPrice: Int) {
+    init(houseName: String, totalPrice: Double, formattedPrice: String) {
         self.houseName = houseName
-        self.totalPrice = totalPrice
-        super.init(nibName: nil, bundle: nil)
+            self.totalPrice = totalPrice
+            self.receivedPrice = formattedPrice
+            super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -227,9 +215,12 @@ final class ApplicationVC: UIViewController {
         setupUI()
         setupKeyboardHandling()
         view.backgroundColor = .systemBackground
-        priceLabel.text = receivedPrice
+        priceLabel.text = "Предварительная стоимость дома: \(receivedPrice) ₽"
         
         emailTextField.addTarget(self, action: #selector(emailTextFieldDidChange), for: .editingChanged)
+        
+//        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+//        navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
     
     @objc func emailTextFieldDidChange() {
@@ -392,7 +383,7 @@ final class ApplicationVC: UIViewController {
             emailTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             emailTextField.heightAnchor.constraint(equalToConstant: 50),
             
-            consentStackView.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 16),
+            consentStackView.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 24),
             consentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             consentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
@@ -544,8 +535,14 @@ extension ApplicationVC: UITextFieldDelegate {
     
 }
 
+//extension ApplicationVC: UIGestureRecognizerDelegate {
+//    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+//        return navigationController?.viewControllers.count ?? 0 > 1
+//    }
+//}
+
 
 #Preview {
-    let vc = ApplicationVC(houseName: "60-23 Виллози-дом", totalPrice: 1_630_908)
-    return UINavigationController(rootViewController: vc)
+    let vc = ApplicationVC(houseName: "60-23 Виллози-дом", totalPrice: 1_630_908, formattedPrice: "цена")
+    UINavigationController(rootViewController: vc)
 }

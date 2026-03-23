@@ -122,13 +122,16 @@ class CalculatingTheHouseCell: UITableViewCell {
         
     }
     @objc private func buttonTapped() {
-//        isSelectedState.toggle()
-//        setSelected(isSelectedState)
-//        onSelect?(isSelectedState)
+        //        isSelectedState.toggle()
+        //        setSelected(isSelectedState)
+        //        onSelect?(isSelectedState)
     }
 }
 #Preview {
-    CalculatingTheHouseViewController()
+    let navigationController = UINavigationController(
+        rootViewController: CalculatingTheHouseViewController(houseId: "124-14")
+    )
+    return navigationController
 }
 
 //высота ячейки = размер элемента(14)

@@ -8,15 +8,19 @@
 import Foundation
 
 struct House {
+    let id: String
     let name: String
     let dimensions: String
     let area: Double
     let bedrooms: Int
     let price: Double
     let imageProject: String?
+//    let finishingCategories: [Category]
+//    let engineeringCategories: [Category]
+    let categoriesPrices: [String: Double] = ["professional_montage": 50000, "professional_installation": 100000]
     var isFavorite: Bool = false
     
-    var areaRange: HouseProject.AreaRange {
+    var areaRange: AreaRange {
         switch area {
         case ..<50:
             return .fiftyMetres

@@ -33,98 +33,139 @@ final class CalculatingTheHouseViewController: UIViewController {
         let isDefaultSelected: Bool
     }
     
-    struct StructureHome {
-        static let titles: [String] = [
-            "Набор раскроенных панелей",
-            "Пиломатериал сухой строганый",
-            "Клееный брус",
-            "Крепеж (41 мм, 75 мм, 120 мм.)",
-            "Специализированный силовой крепеж (180мм - 360мм)",
-            "Материалы, улучшающие теплоизоляцию и герметичность дома:"
-        ]
-    }
+    private let houseId: String
+    private let configurationService: CatalogExteriorDecorationDataSourse
+    private var houseConfiguration: HouseConfiguration?
+    private var selectedHouseImage: UIImage?
+    
+    
     
     // MARK: - Data
     
-    let finishingData: [Category] = [
-        Category(
+    var finishingData: [Category] {
+        return [
+            createHouseKitCategory(),
+            createRoofingCategory(),
+            createRoofAccessoriesCategory(),
+            createFacadeCategory(),
+            createGableEndCategory(),
+            createSoffitCategory(),
+            createWindowsDoorsCategory(),
+            createTerracesCategory(),
+            createBeamFinishingCategory(),
+            createTerraceDeckingCategory()
+        ]
+    }
+    
+    private func createHouseKitCategory() -> Category {
+        let kit = houseConfiguration?.houseKit ?? HouseConfiguration.HouseKit(
+            cutPanels: 0,//Обрезные панели
+            dryLumber: 0,//пиломатериалы
+            gluedBeam: 0,//клееный брус
+            fastener: 0,//крепеж
+            powerFastener: 0,//силовой крепеж
+            insulationMaterials: 0,//изоляционные материалы
+            professionalInstallation: 0,//профессиональный монтаж
+            foundationSlab: 0//фундамент
+        )
+        
+        return Category(
             title: "Комплект дома",
             selectionType: .multiple,
             options: [
                 FinishingOption(
-                    id: "1",
+                    id: "kit_1",
                     title: "Набор раскроенных панелей",
-                    deltaRub: 551265.56, isDefaultSelected: true
+                    deltaRub: kit.cutPanels, isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "2",
+                    id: "kit_2",
                     title: "Пиломатериал сухой строганый",
-                    deltaRub: 598240.00, isDefaultSelected: true
+                    deltaRub: kit.dryLumber, isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "3",
+                    id: "kit_3",
                     title: "Клееный брус",
-                    deltaRub: 149064.00,
+                    deltaRub: kit.gluedBeam,
                     isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "4",
+                    id: "kit_4",
                     title: "Крепеж (41 мм, 75 мм, 120 мм.)",
-                    deltaRub: 59280.56, isDefaultSelected: true
+                    deltaRub: kit.fastener, isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "5",
+                    id: "kit_5",
                     title: "Специализированный силовой крепеж (180мм - 360мм)",
-                    deltaRub: 15150.44, isDefaultSelected: true
+                    deltaRub: kit.powerFastener, isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "6",
+                    id: "kit_6",
                     title: "Материалы, улучшающие теплоизоляцию и герметичность дома:",
-                    deltaRub: 42748, isDefaultSelected: true
+                    deltaRub: kit.insulationMaterials, isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "7",
+                    id: "kit_7",
                     title: "Профессиональный монтаж:",
-                    deltaRub: 525372, isDefaultSelected: true
+                    deltaRub: kit.professionalInstallation, isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "8",
+                    id: "kit_8",
                     title: "Монтаж фундамента-железобетонные сваи:",
-                    deltaRub: 320767, isDefaultSelected: true
+                    deltaRub: kit.foundationSlab, isDefaultSelected: true
                 ),
                 FinishingOption(
-                    id: "9",
+                    id: "kit_9",
                     title: "Бытовка, снегозадержетели, доставка, биотуалет, укрывные тенты, подкладные доски, временная лестница:",
                     deltaRub: 90000.00, isDefaultSelected: true
-                ),
+                )
             ]
-        ),Category(
+        )
+    }
+    private func createRoofingCategory() -> Category {
+        let roofing = houseConfiguration?.roofingOptions ?? HouseConfiguration.RoofingOptions(
+            metalTile: 0,
+            bitumenShingle: 0,
+            seamRoof: 0,
+            corrugatedSheet: 0,
+            builtUpRoof: 0
+        )
+        
+        return Category(
             title: "Кровля",
             selectionType: .single,
             options: [
                 FinishingOption(
-                    id: "1",
+                    id: "roof_1",
                     title: "Металлочерепица",
                     deltaRub: 378793, isDefaultSelected: false
                 ),FinishingOption(
-                    id: "2",
+                    id: "roof_2",
                     title: "Фальцевая кровля",
                     deltaRub: 565608, isDefaultSelected: false
                 ),FinishingOption(
-                    id: "3",
+                    id: "roof_3",
                     title: "Наплавляемая кровля",
                     deltaRub: 590537, isDefaultSelected: false
                 ),FinishingOption(
-                    id: "4",
+                    id: "roof_4",
                     title: "Битумная черепица",
                     deltaRub: 469722, isDefaultSelected: false
                 ),FinishingOption(
-                    id: "5",
+                    id: "roof_5",
                     title: "Профнастил кровельный",
                     deltaRub: 414337, isDefaultSelected: false
-                ),
+                )
             ]
-        ),Category(
+        )
+    }
+    private func createRoofAccessoriesCategory() -> Category {
+        let accessories = houseConfiguration?.roofAccessories ?? HouseConfiguration.RoofAccessories(
+            ventilationElements: 0,
+            gutterSystem: 0
+        )
+        
+        return Category(
             title: "На кровлю",
             selectionType: .multiple,
             options: [
@@ -138,7 +179,23 @@ final class CalculatingTheHouseViewController: UIViewController {
                     deltaRub: 105260, isDefaultSelected: false
                 )
             ]
-        ),Category(
+        )
+    }
+    private func createFacadeCategory() -> Category {
+        let facade = houseConfiguration?.facadeOptions ?? HouseConfiguration.FacadeOptions(
+            vinylSiding: 0,
+            vinylPanels: 0,
+            woodImitation: 0,
+            fiberCementSiding: 0,
+            hauberkBrick: 0,
+            fold: 0,
+            wallCorrugatedSheet: 0,
+            metalSiding: 0,
+            clinkerTile: 0,
+            facadeConservation: 0
+        )
+        
+        return Category(
             title: "Фасад",
             selectionType: .single,
             options: [
@@ -186,9 +243,18 @@ final class CalculatingTheHouseViewController: UIViewController {
                     id: "11",
                     title: "Консервация фасада",
                     deltaRub: 68922, isDefaultSelected: false
-                ),
+                )
             ]
-        ),Category(
+        )
+    }
+    private func createGableEndCategory() -> Category {
+        let gable = houseConfiguration?.gableEndOptions ?? HouseConfiguration.GableEndOptions(
+            vinylJTrim: 0,
+            wood: 0,
+            metalLTrim: 0
+        )
+        
+        return Category(
             title: "Торцы крыши",
             selectionType: .single,
             options: [
@@ -206,7 +272,17 @@ final class CalculatingTheHouseViewController: UIViewController {
                     deltaRub: 76765, isDefaultSelected: false
                 )
             ]
-        ),Category(
+        )
+    }
+    private func createSoffitCategory() -> Category {
+        let soffit = houseConfiguration?.soffitOptions ?? HouseConfiguration.SoffitOptions(
+            vinylSoffit: 0,
+            wood: 0,
+            fiberCementSiding: 0,
+            metalSoffit: 0
+        )
+        
+        return Category(
             title: "Свесы крыши, потолки над террасами и балконами",
             selectionType: .single,
             options: [
@@ -228,17 +304,40 @@ final class CalculatingTheHouseViewController: UIViewController {
                     deltaRub: 107667, isDefaultSelected: false
                 )
             ]
-        ),Category(
+        )
+    }
+    private func createWindowsDoorsCategory() -> Category {
+        let windowsDoors = houseConfiguration?.windowsDoors ?? HouseConfiguration.WindowsDoors(
+            aluminumDoors: 0,
+            metalPlasticWindows: 0
+        )
+        
+        return Category(
             title: "Окна и двери",
             selectionType: .single,
             options: [
                 FinishingOption(
-                    id: "1",
+                    id: "windows_1",
                     title: "Металлопластиковые окна и двери",
-                    deltaRub: 388154, isDefaultSelected: false
+                    deltaRub: windowsDoors.metalPlasticWindows,
+                    isDefaultSelected: false
+                ),
+                FinishingOption(
+                    id: "windows_2",
+                    title: "Алюминиевые двери",
+                    deltaRub: windowsDoors.aluminumDoors,
+                    isDefaultSelected: false
                 )
             ]
-        ),Category(
+        )
+    }
+    private func createTerracesCategory() -> Category {
+        let terraces = houseConfiguration?.terraces ?? HouseConfiguration.Terraces(
+            terraceWaterproofing: 0,
+            beamFinishing: HouseConfiguration.Terraces.BeamFinishing(puttyAndPaint: 0)
+        )
+        
+        return Category(
             title: "Балконы, террасы, лестницы",
             selectionType: .single,
             options: [
@@ -248,7 +347,12 @@ final class CalculatingTheHouseViewController: UIViewController {
                     deltaRub: 200928, isDefaultSelected: false
                 )
             ]
-        ),Category(
+        )
+    }
+    private func createBeamFinishingCategory() -> Category {
+        let beamFinishing = houseConfiguration?.terraces.beamFinishing ?? HouseConfiguration.Terraces.BeamFinishing(puttyAndPaint: 0)
+        
+        return Category(
             title: "Отделка балок и стоек на террасе и балконе",
             selectionType: .single,
             options: [
@@ -258,7 +362,16 @@ final class CalculatingTheHouseViewController: UIViewController {
                     deltaRub: 53374, isDefaultSelected: false
                 )
             ]
-        ),Category(
+        )
+    }
+    private func createTerraceDeckingCategory() -> Category {
+        let decking = houseConfiguration?.terraceDeckingOptions ?? HouseConfiguration.TerraceDeckingOptions(
+            woodenDecking: 0,
+            compositeDecking: 0,
+            sheetMaterials: 0
+        )
+        
+        return Category(
             title: "Настил на террасах",
             selectionType: .single,
             options: [FinishingOption(id: "1", title: "Террасная доска", deltaRub: 262559, isDefaultSelected: false),FinishingOption(
@@ -269,10 +382,10 @@ final class CalculatingTheHouseViewController: UIViewController {
                 id: "1",
                 title: "Террасная доска искусственная (ДПК)",
                 deltaRub: 349796, isDefaultSelected: false
-            ),
+            )
             ]
         )
-    ]
+    }
     
     let engineeringData: [Category] = [
         Category(
@@ -366,7 +479,7 @@ final class CalculatingTheHouseViewController: UIViewController {
     
     private var finishingSelectedSingleRow: [Int?] = [] // для секций .single
     private var finishingSelectedMultipleRows: [Set<Int>] = [] // для секций .multiple
-
+    
     private var engineeringSelectedSingleRow: [Int?] = []
     private var engineeringSelectedMultipleRows: [Set<Int>] = []
     
@@ -383,8 +496,11 @@ final class CalculatingTheHouseViewController: UIViewController {
     
     private let homeImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "home2014"))
-        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 12
+        imageView.tintColor = .systemGray3
+        imageView.contentMode = .center
+        imageView.backgroundColor = .systemGray6
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -422,10 +538,47 @@ final class CalculatingTheHouseViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Initialization
+    
+    init(
+        houseId: String,
+        houseImage: UIImage? = nil,
+        configurationService: CatalogExteriorDecorationDataSourse = CatalogExteriorDecorationDataSourse()
+    ) {
+        self.houseId = houseId
+        self.selectedHouseImage = houseImage
+        self.configurationService = configurationService
+        super.init(
+            nibName: nil,
+            bundle: nil
+        )
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let titleLabel = UILabel()
+        titleLabel.text = "Расчет стоимости дома VilloziHouse"
+        titleLabel.numberOfLines = 0
+        titleLabel.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = .label
+        titleLabel.sizeToFit()
+        
+        navigationItem.titleView = titleLabel
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
+        if let image = selectedHouseImage {
+            homeImageView.image = image
+            homeImageView.contentMode = .scaleAspectFill
+        }
+        
         currentData = finishingData
         
         finishingSelectedSingleRow = Array(repeating: nil, count: finishingData.count)
@@ -435,7 +588,7 @@ final class CalculatingTheHouseViewController: UIViewController {
         engineeringSelectedMultipleRows = Array(repeating: [], count: engineeringData.count)
         
         applyDefaultSelection()
-            
+        
         setupTableView()
         setupUI()
         updateTotalPriceLabel()
@@ -446,10 +599,12 @@ final class CalculatingTheHouseViewController: UIViewController {
     private func setupUI() {
         applyButton.addTarget(self, action: #selector(applyButtonTapped), for: .touchUpInside)
         calculatedPrice = "Выбирите комплектацию для рассчета"
+        
+        
         finalPriceLabel.text = "Итоговая цена: \(calculatedPrice)"
         
         segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
-
+        
         view.addSubview(homeImageView)
         view.addSubview(segmentControl)
         view.addSubview(tableView)
@@ -457,26 +612,26 @@ final class CalculatingTheHouseViewController: UIViewController {
         view.addSubview(applyButton)
         
         NSLayoutConstraint.activate([
-            homeImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            homeImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             homeImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             homeImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             homeImageView.heightAnchor.constraint(equalToConstant: 200),
             
-            segmentControl.topAnchor.constraint(equalTo: homeImageView.bottomAnchor, constant: 12),
+            segmentControl.topAnchor.constraint(equalTo: homeImageView.bottomAnchor, constant: 8),
             segmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             segmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             segmentControl.heightAnchor.constraint(equalToConstant: 32),
             
-            tableView.topAnchor.constraint(equalTo: segmentControl.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: -4),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: finalPriceLabel.topAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: finalPriceLabel.topAnchor, constant: -4),
             
             finalPriceLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             finalPriceLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             finalPriceLabel.heightAnchor.constraint(equalToConstant: 36),
             
-            applyButton.topAnchor.constraint(equalTo: finalPriceLabel.bottomAnchor, constant: 8),
+            applyButton.topAnchor.constraint(equalTo: finalPriceLabel.bottomAnchor, constant: 4),
             applyButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             applyButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             applyButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
@@ -524,23 +679,23 @@ final class CalculatingTheHouseViewController: UIViewController {
         }
         
         for (sectionIndex, section) in engineeringData.enumerated() {
-                    switch section.selectionType {
-                    case .single:
-                        if let rowIndex = section.options.firstIndex(where: {
-                            $0.isDefaultSelected
-                        }) {
-                            engineeringSelectedSingleRow[sectionIndex] = rowIndex
-                        }
-                    case .multiple:
-                        let selectedRows = Set(
-                            section.options.enumerated()
-                                .filter { $0.element.isDefaultSelected }
-                                .map { $0.offset }
-                        )
-                        
-                        engineeringSelectedMultipleRows[sectionIndex] = selectedRows
-                    }
+            switch section.selectionType {
+            case .single:
+                if let rowIndex = section.options.firstIndex(where: {
+                    $0.isDefaultSelected
+                }) {
+                    engineeringSelectedSingleRow[sectionIndex] = rowIndex
                 }
+            case .multiple:
+                let selectedRows = Set(
+                    section.options.enumerated()
+                        .filter { $0.element.isDefaultSelected }
+                        .map { $0.offset }
+                )
+                
+                engineeringSelectedMultipleRows[sectionIndex] = selectedRows
+            }
+        }
     }
     
     private func calculateSum(
@@ -599,7 +754,7 @@ final class CalculatingTheHouseViewController: UIViewController {
     }
     
     private func goToApplicationVC() {
-        let applicationVC = ApplicationVC(houseName: "", totalPrice: 0)
+        let applicationVC = ApplicationVC(houseName: "", totalPrice: 0, formattedPrice: "\(priceSumm)")
         applicationVC.receivedPrice = finalPriceLabel.text ?? ""
         navigationController?.pushViewController(applicationVC, animated: true)
     }
@@ -607,8 +762,24 @@ final class CalculatingTheHouseViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func applyButtonTapped() {
-        let applicationVC = ApplicationVC(houseName: "Мой дом", totalPrice: 0)
+        let totalPrice = calculateTotalSumma()
+        let formattedPrice = formatPrice(totalPrice)
+        
+        let applicationVC = ApplicationVC(
+                houseName: "Мой дом",
+                totalPrice: totalPrice,
+                formattedPrice: formattedPrice
+        )
         navigationController?.pushViewController(applicationVC, animated: true)
+    }
+    
+    private func formatPrice(_ price: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = " "
+        formatter.maximumFractionDigits = 2
+        
+        return formatter.string(from: NSNumber(value: price)) ?? "\(price)"
     }
     
     @objc func segmentChanged() {
@@ -666,12 +837,14 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
                 isSelected = engineeringSelectedMultipleRows[indexPath.section].contains(indexPath.row)
             }
         }
-
+        
         cell.configure(with: option, selectionType: selectionType, isSelected: isSelected)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        
         let selectionType = currentData[indexPath.section].selectionType
         let isFinishing = segmentControl.selectedSegmentIndex == 0
         
@@ -721,5 +894,8 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
 }
 
 #Preview {
-    CalculatingTheHouseViewController()
+    let navigationController = UINavigationController(
+        rootViewController: CalculatingTheHouseViewController(houseId: "124-14")
+    )
+    return navigationController
 }

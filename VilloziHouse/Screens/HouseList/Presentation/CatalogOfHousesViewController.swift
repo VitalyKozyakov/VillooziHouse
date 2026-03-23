@@ -16,16 +16,35 @@ class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
     
     // MARK: - UI
     
-    private var tableView = UITableView()
-    private let pickerView = UIPickerView()
+    private lazy var tableView: UITableView = {
+        let tableView =  UITableView(frame: .zero, style: .grouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(CatalogOfHousesCell.self, forCellReuseIdentifier: CatalogOfHousesCell.reuseIdentifier)
+        tableView.separatorStyle = .singleLine
+        tableView.backgroundColor = .systemBackground
+        tableView.sectionHeaderTopPadding = 0
+        return tableView
+    }()
     
-    private let pickerTextField: UITextField = {
+    private lazy var pickerView: UIPickerView = {
+        let picker = UIPickerView()
+        picker.dataSource = self
+        picker.delegate = self
+        return picker
+    }()
+    
+    private lazy var pickerTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "🔍 Поиск проектов"
+        textField.placeholder = "🔍 Выбор проектов"
         textField.borderStyle = .roundedRect
         textField.layer.masksToBounds = true
         textField.layer.cornerRadius = 8
         textField.backgroundColor = .systemGray6
+        textField.inputView = pickerView
+        textField.inputAccessoryView = makeToolbar()
+        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
@@ -45,23 +64,15 @@ class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
     }
     
     private func setupTableView() {
+        addTapGestureToHidePicker()
         
-        pickerView.dataSource = self
-        pickerView.delegate = self
-        tableView = UITableView(frame: view.bounds, style: .grouped)
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(CatalogOfHousesCell.self, forCellReuseIdentifier: CatalogOfHousesCell.reuseIdentifier)
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = .systemBackground
         view.addSubview(tableView)
         view.addSubview(pickerTextField)
-        pickerTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        tableView.sectionHeaderTopPadding = 0
-        
-        tableView.contentInset = UIEdgeInsets(top: 30, left: 0, bottom: 10, right: 40)
-        
+        configureConstraints()
+    }
+    
+    private func configureConstraints() {
         NSLayoutConstraint.activate([
             pickerTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             pickerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
@@ -73,23 +84,21 @@ class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
-        
-        pickerTextField.inputView = pickerView
-        pickerTextField.inputAccessoryView = makeToolbar()
-        
+    }
+    
+    // MARK: - Private methods
+    
+    private func addTapGestureToHidePicker() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissPicker))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
-    
-    // MARK: - Private methods
     
     private func loadData() {
         allSections = dataSourse.getHouse()
         filteredSections = allSections
         tableView.reloadData()
         
-        pickerTextField.text = "🔍 Все проекты"
         pickerView.selectRow(0, inComponent: 0, animated: false)
     }
     
@@ -100,14 +109,16 @@ class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
             let selectedSection = allSections[selectedIndex - 1]
             filteredSections = [selectedSection]
         }
+        
         tableView.reloadData()
-        if tableView.numberOfSections > 0 {
+        if tableView.numberOfSections > 0,
+           tableView.numberOfRows(inSection: 0) > 0 {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         }
     }
     
     func didToggleFavorite(in cell: CatalogOfHousesCell, state: Bool) {
-        
+        //        model.isFavourite = state
     }
     private func saveFavoriteStatus(for houseId: String, isFavorite: Bool) {
         var favorites = UserDefaults.standard.array(forKey: "favoriteHouses") as? [String] ?? []
@@ -165,18 +176,9 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
         }
         
         let house = filteredSections[indexPath.section].house[indexPath.row]
-        
-        cell.backgroundColor = .clear
-        
         cell.configure(with: house)
         cell.delegate = self
-        cell.contentView.layer.cornerRadius = 12
-        cell.contentView.layer.masksToBounds = true
-        cell.contentView.backgroundColor = UIColor(red: 0.74, green: 0.9, blue: 0.78, alpha: 1.0)
         return cell
-    }
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return filteredSections[section].named
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 40
@@ -218,14 +220,16 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         tableView.deselectRow(at: indexPath, animated: true)
+        
         guard indexPath.section < filteredSections.count,
               indexPath.row < filteredSections[indexPath.section].house.count else {
             return
         }
         let house = filteredSections[indexPath.section].house[indexPath.row]
         
-        let calculatingVC = CalculatingTheHouseViewController()
+        let calculatingVC = CalculatingTheHouseViewController(houseId: house.id, houseImage: UIImage(named: house.imageProject ?? ""))
         
         navigationController?.pushViewController(calculatingVC, animated: true)
     }

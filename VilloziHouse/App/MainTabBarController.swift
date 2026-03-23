@@ -50,7 +50,8 @@ final class MainTabBarController: UITabBarController {
         )
         
         // Вкладка 3: Сравнение (заглушка)
-        let compareVC = CalculatingTheHouseViewController()
+        let defaultHouseId = "124-14"
+        let compareVC = CalculatingTheHouseViewController(houseId: defaultHouseId)
         let compareNav = UINavigationController(rootViewController: compareVC)
         compareNav.tabBarItem = UITabBarItem(
             title: "Расчет",
@@ -66,7 +67,7 @@ final class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "person"),
             selectedImage: UIImage(systemName: "person.fill")
         )
-        let applicationVC = ApplicationVC(houseName: "Заявка", totalPrice: 0)
+        let applicationVC = ApplicationVC(houseName: "Заявка", totalPrice: 0, formattedPrice: "ценник 70")
         let applicationNav = UINavigationController(rootViewController: applicationVC)
         applicationNav.tabBarItem = UITabBarItem(
             title: "Заявка",
@@ -85,6 +86,7 @@ final class MainTabBarController: UITabBarController {
     private func setupAppearance() {
         // 📚 UITabBarAppearance — настройка внешнего вида TabBar
         let appearance = UITabBarAppearance()
+        title = "VilloziHouse"
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .systemBackground
         
