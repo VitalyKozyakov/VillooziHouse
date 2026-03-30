@@ -152,7 +152,7 @@ final class ApplicationVC: UIViewController {
     
     private let successLabel: UILabel = {
         let label = UILabel()
-        label.text = "Заявка успешно отправлена"
+        label.text = "\("Заявка успешно отправлена")"
         label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.textColor = .label
         label.textAlignment = .center

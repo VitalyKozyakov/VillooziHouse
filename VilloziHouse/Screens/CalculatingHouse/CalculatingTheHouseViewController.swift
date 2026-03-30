@@ -37,7 +37,7 @@ final class CalculatingTheHouseViewController: UIViewController {
     private let configurationService: CatalogExteriorDecorationDataSourse
     private var houseConfiguration: HouseConfiguration?
     private var selectedHouseImage: UIImage?
-    private let houseImages: [UIImage] = []
+    private let houseImages: [UIImage]
     private var currentImageIndex: Int = 0
     
     
@@ -509,36 +509,6 @@ final class CalculatingTheHouseViewController: UIViewController {
         return imageView
     }()
     
-    private let galleryContentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private let pageControl: UIPageControl = {
-        let pageControl = UIPageControl()
-        pageControl.currentPageIndicatorTintColor = .white
-        pageControl.pageIndicatorTintColor = .gray
-        pageControl.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        pageControl.layer.cornerRadius = 12
-        pageControl.clipsToBounds = true
-        pageControl.isUserInteractionEnabled = false
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
-        return pageControl
-    }()
-    
-    private let galleryScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.isPagingEnabled = true
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.backgroundColor = .systemGray6
-        scrollView.layer.cornerRadius = 12
-        scrollView.clipsToBounds = true
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
     private let segmentControl: UISegmentedControl = {
         let items: [String] = ["Отделка", "Инженерия"]
         let segmentControl = UISegmentedControl(items: items)
@@ -577,10 +547,12 @@ final class CalculatingTheHouseViewController: UIViewController {
     init(
         houseId: String,
         houseImage: UIImage? = nil,
+        houseImages: [UIImage] = [],
         configurationService: CatalogExteriorDecorationDataSourse = CatalogExteriorDecorationDataSourse()
     ) {
         self.houseId = houseId
         self.selectedHouseImage = houseImage
+        self.houseImages = houseImages
         self.configurationService = configurationService
         super.init(
             nibName: nil,
@@ -628,9 +600,28 @@ final class CalculatingTheHouseViewController: UIViewController {
         setupTableView()
         setupUI()
         updateTotalPriceLabel()
+        setupTableHeader()
     }
     
     // MARK: - Configure UI
+    
+    private func setupTableHeader() {
+        let header = HeaderGalleryView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 216))
+
+        
+        let images: [UIImage]
+        
+        if !houseImages.isEmpty {
+            images = houseImages
+        } else if let selectedHouseImage {
+            images = [selectedHouseImage]
+        } else {
+            images = [UIImage(systemName: "project127-14-02") ?? UIImage()]
+        }
+        
+        header.configure(images: images)
+        tableView.tableHeaderView = header
+    }
     
     private func setupUI() {
         applyButton.addTarget(self, action: #selector(applyButtonTapped), for: .touchUpInside)
@@ -641,24 +632,24 @@ final class CalculatingTheHouseViewController: UIViewController {
         
         segmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
         
-        view.addSubview(homeImageView)
+//        view.addSubview(homeImageView)
         view.addSubview(segmentControl)
         view.addSubview(tableView)
         view.addSubview(finalPriceLabel)
         view.addSubview(applyButton)
         
         NSLayoutConstraint.activate([
-            homeImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            homeImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            homeImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            homeImageView.heightAnchor.constraint(equalToConstant: 200),
+//            homeImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+//            homeImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+//            homeImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+//            homeImageView.heightAnchor.constraint(equalToConstant: 200),
             
-            segmentControl.topAnchor.constraint(equalTo: homeImageView.bottomAnchor, constant: 8),
+            segmentControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             segmentControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             segmentControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             segmentControl.heightAnchor.constraint(equalToConstant: 32),
             
-            tableView.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: -4),
+            tableView.topAnchor.constraint(equalTo: segmentControl.bottomAnchor, constant: 8),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: finalPriceLabel.topAnchor, constant: -4),
@@ -852,25 +843,26 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
         ) as? CalculatingTheHouseCell else {
             return UITableViewCell()
         }
-        let house = currentData[indexPath.section].house[indexPath.row]
-//        let house = filteredSections[indexPath.section].house[indexPath.row]
-        cell.configureImagePage(images: [])
         
-        if house.imageGallery.isEmpty,
-            let image = house.imageProject {
-            if let uiImage = UIImage(named: image) {
-                cell.configureImagePage(images: [uiImage])
-            } else {
-                cell.configureImagePage(images: [UIImage(systemName: "house.fill") ?? UIImage()])
-            }
-            
-        } else {
-            let uiImages = house.imageGallery.compactMap { UIImage(named: $0) }
-            cell.configureImagePage(images: uiImages)
-        }
+//        let house = currentData[indexPath.section].options[indexPath.row]
+//        let house = filteredSections[indexPath.section].house[indexPath.row]
+//        cell.configureImagePage(images: [])
+        
+//        if house.imageGallery.isEmpty,
+//            let image = house.imageProject {
+//            if let uiImage = UIImage(named: image) {
+//                cell.configureImagePage(images: [uiImage])
+//            } else {
+//                cell.configureImagePage(images: [UIImage(systemName: "house.fill") ?? UIImage()])
+//            }
+//            
+//        } else {
+//            let uiImages = house.imageGallery.compactMap { UIImage(named: $0) }
+//            cell.configureImagePage(images: uiImages)
+//        }
 
 //        cell.delegate = self
-        return cell
+//        return cell
     
         
         
@@ -952,7 +944,7 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
 
 #Preview {
     let navigationController = UINavigationController(
-        rootViewController: CalculatingTheHouseViewController(houseId: "124-14")
+        rootViewController: CalculatingTheHouseViewController(houseId: "project127-14-01")
     )
     return navigationController
 }

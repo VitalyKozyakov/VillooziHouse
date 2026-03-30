@@ -243,7 +243,25 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
         }
         let house = filteredSections[indexPath.section].house[indexPath.row]
         
-        let calculatingVC = CalculatingTheHouseViewController(houseId: house.id, houseImage: UIImage(named: house.imageProject ?? ""))
+        
+        let houseImages: [UIImage]
+        if house.imageGallery.isEmpty,
+           let image = house.imageProject {
+            if let uiImage = UIImage(named: image) {
+                houseImages = [uiImage]
+            } else {
+                houseImages = [UIImage(systemName: "house.fill") ?? UIImage()]
+            }
+        } else {
+            let uiImages = house.imageGallery.compactMap { UIImage(named: $0) }
+            houseImages = uiImages
+        }
+        
+        let calculatingVC = CalculatingTheHouseViewController(
+            houseId: house.id,
+            houseImage: UIImage(named: house.imageProject ?? ""),
+            houseImages: houseImages
+        )
         
         navigationController?.pushViewController(calculatingVC, animated: true)
     }

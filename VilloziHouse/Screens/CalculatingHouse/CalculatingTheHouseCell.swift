@@ -13,14 +13,14 @@ class CalculatingTheHouseCell: UITableViewCell {
     
     private var images: [UIImage] = []
     
-    private let cardView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(red: 0.74, green: 0.9, blue: 0.78, alpha: 1.0)
-        view.layer.cornerRadius = 16
-        view.clipsToBounds = true
-        return view
-    }()
+//    private let cardView: UIView = {
+//        let view = UIView()
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        view.backgroundColor = UIColor(red: 0.74, green: 0.9, blue: 0.78, alpha: 1.0)
+//        view.layer.cornerRadius = 16
+//        view.clipsToBounds = true
+//        return view
+//    }()
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -144,26 +144,26 @@ class CalculatingTheHouseCell: UITableViewCell {
     private func setupCell() {
         pageControl.addTarget(self, action: #selector(pageControlChanged(_:)), for: .valueChanged)
         
-        contentView.addSubview(collectionView)
-        collectionView.addSubview(cardView)
-        cardView.addSubview(pageControl)
+//        contentView.addSubview(cardView)
+//        cardView.addSubview(pageControl)
+//        cardView.addSubview(collectionView)
         contentView.addSubview(nameMaterialLabel)
         contentView.addSubview(priceMaterialLabel)
         contentView.addSubview(selectButton)
         
         NSLayoutConstraint.activate([
-            cardView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            cardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            cardView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            cardView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+//            cardView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+//            cardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+//            cardView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+//            cardView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+//            
+//            collectionView.topAnchor.constraint(equalTo: cardView.topAnchor),
+//            collectionView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor),
+//            collectionView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor),
+//            collectionView.heightAnchor.constraint(equalToConstant: 200),
             
-            collectionView.topAnchor.constraint(equalTo: cardView.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: 200),
-            
-            pageControl.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: -8),
-            pageControl.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+//            pageControl.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: -8),
+//            pageControl.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
             selectButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             selectButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
