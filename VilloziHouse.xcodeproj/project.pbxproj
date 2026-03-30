@@ -11,6 +11,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		086ACE242F75E8DC001E810B /* VilloziHouse.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VilloziHouse.xcodeproj; path = VilloziHouse/App/VilloziHouse.xcodeproj; sourceTree = SOURCE_ROOT; };
+		086AF3192F75E903006D5FEC /* VilloziHouse.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = VilloziHouse.xcodeproj; sourceTree = "<group>"; };
 		08FCB1D72F4B4FF900909639 /* VilloziHouse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VilloziHouse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -47,6 +49,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		086ACE272F75E8DC001E810B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		086AF33A2F75E903006D5FEC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		08FCB1CE2F4B4FF900909639 = {
 			isa = PBXGroup;
 			children = (
@@ -119,6 +135,16 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08FCB1D82F4B4FF900909639 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 086AF33A2F75E903006D5FEC /* Products */;
+					ProjectRef = 086AF3192F75E903006D5FEC /* VilloziHouse.xcodeproj */;
+				},
+				{
+					ProductGroup = 086ACE272F75E8DC001E810B /* Products */;
+					ProjectRef = 086ACE242F75E8DC001E810B /* VilloziHouse.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				08FCB1D62F4B4FF900909639 /* VilloziHouse */,

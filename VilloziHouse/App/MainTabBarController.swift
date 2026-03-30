@@ -32,19 +32,19 @@ final class MainTabBarController: UITabBarController {
         //    • Возможность push/pop между экранами
         
         // Вкладка 1: Каталог проектов
-                let catalogVC = CatalogOfHousesViewController()
+                let catalogVC = MainVilloziHouseVC()
         let catalogNav = UINavigationController(rootViewController: catalogVC)
         catalogNav.tabBarItem = UITabBarItem(
-            title: "Проекты",
+            title: "Главная",
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
         )
         
         // Вкладка 2: Избранное (заглушка)
-        let favoritesVC = PlaceholderViewController(title: "Избранное", icon: "heart")
+        let favoritesVC = CatalogOfHousesViewController()
         let favoritesNav = UINavigationController(rootViewController: favoritesVC)
         favoritesNav.tabBarItem = UITabBarItem(
-            title: "Избранное",
+            title: "Проекты",
             image: UIImage(systemName: "heart"),
             selectedImage: UIImage(systemName: "heart.fill")
         )

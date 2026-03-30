@@ -177,6 +177,20 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
         
         let house = filteredSections[indexPath.section].house[indexPath.row]
         cell.configure(with: house)
+        //ШАГ1
+        if house.imageGallery.isEmpty,
+            let image = house.imageProject {
+            if let uiImage = UIImage(named: image) {
+                cell.configure(images: [uiImage])
+            } else {
+                cell.configure(images: [UIImage(systemName: "house.fill") ?? UIImage()])
+            }
+            
+        } else {
+            let uiImages = house.imageGallery.compactMap { UIImage(named: $0) }
+            cell.configure(images: uiImages)
+        }
+
         cell.delegate = self
         return cell
     }

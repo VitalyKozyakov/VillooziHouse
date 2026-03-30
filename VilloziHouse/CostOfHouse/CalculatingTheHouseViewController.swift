@@ -37,6 +37,8 @@ final class CalculatingTheHouseViewController: UIViewController {
     private let configurationService: CatalogExteriorDecorationDataSourse
     private var houseConfiguration: HouseConfiguration?
     private var selectedHouseImage: UIImage?
+    private let houseImages: [UIImage] = []
+    private var currentImageIndex: Int = 0
     
     
     
@@ -117,7 +119,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "kit_9",
                     title: "Бытовка, снегозадержетели, доставка, биотуалет, укрывные тенты, подкладные доски, временная лестница:",
-                    deltaRub: 90000.00, isDefaultSelected: true
+                    deltaRub: kit.foundationSlab, isDefaultSelected: true
                 )
             ]
         )
@@ -138,23 +140,23 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "roof_1",
                     title: "Металлочерепица",
-                    deltaRub: 378793, isDefaultSelected: false
+                    deltaRub: roofing.metalTile, isDefaultSelected: false
                 ),FinishingOption(
                     id: "roof_2",
                     title: "Фальцевая кровля",
-                    deltaRub: 565608, isDefaultSelected: false
+                    deltaRub: roofing.bitumenShingle, isDefaultSelected: false
                 ),FinishingOption(
                     id: "roof_3",
                     title: "Наплавляемая кровля",
-                    deltaRub: 590537, isDefaultSelected: false
+                    deltaRub: roofing.seamRoof, isDefaultSelected: false
                 ),FinishingOption(
                     id: "roof_4",
                     title: "Битумная черепица",
-                    deltaRub: 469722, isDefaultSelected: false
+                    deltaRub: roofing.corrugatedSheet, isDefaultSelected: false
                 ),FinishingOption(
                     id: "roof_5",
                     title: "Профнастил кровельный",
-                    deltaRub: 414337, isDefaultSelected: false
+                    deltaRub: roofing.builtUpRoof, isDefaultSelected: false
                 )
             ]
         )
@@ -172,11 +174,11 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Вентиляционные элементы Vilpe. Количество по проекту",
-                    deltaRub: 79947, isDefaultSelected: false
+                    deltaRub: accessories.ventilationElements, isDefaultSelected: false
                 ),FinishingOption(
                     id: "2",
                     title: "Водосточная система",
-                    deltaRub: 105260, isDefaultSelected: false
+                    deltaRub: accessories.gutterSystem, isDefaultSelected: false
                 )
             ]
         )
@@ -202,47 +204,47 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Виниловый сайдинг",
-                    deltaRub: 440905, isDefaultSelected: false
+                    deltaRub: facade.vinylSiding, isDefaultSelected: false
                 ),FinishingOption(
                     id: "2",
                     title: "Деревянная отделка. Имитация бруса",
-                    deltaRub: 665298, isDefaultSelected: false
+                    deltaRub: facade.woodImitation, isDefaultSelected: false
                 ),FinishingOption(
                     id: "3",
                     title: "Фасад под кирпич Хауберк",
-                    deltaRub: 755887, isDefaultSelected: false
+                    deltaRub: facade.hauberkBrick, isDefaultSelected: false
                 ),FinishingOption(
                     id: "4",
                     title: "Профнастил стеновой",
-                    deltaRub: 752975, isDefaultSelected: false
+                    deltaRub: facade.wallCorrugatedSheet, isDefaultSelected: false
                 ),FinishingOption(
                     id: "5",
                     title: "Клинкерная плитка",
-                    deltaRub: 1515379, isDefaultSelected: false
+                    deltaRub: facade.clinkerTile, isDefaultSelected: false
                 ),FinishingOption(
                     id: "6",
                     title: "Виниловые фасадные панели",
-                    deltaRub: 498662, isDefaultSelected: false
+                    deltaRub: facade.vinylPanels, isDefaultSelected: false
                 ),FinishingOption(
                     id: "7",
                     title: "Фиброцементный сайдинг",
-                    deltaRub: 1116033, isDefaultSelected: false
+                    deltaRub: facade.fiberCementSiding, isDefaultSelected: false
                 ),FinishingOption(
                     id: "8",
                     title: "Фальц",
-                    deltaRub: 752975, isDefaultSelected: false
+                    deltaRub: facade.fold, isDefaultSelected: false
                 ),FinishingOption(
                     id: "9",
                     title: "Металлический сайдинг",
-                    deltaRub: 678633, isDefaultSelected: false
+                    deltaRub: facade.metalSiding, isDefaultSelected: false
                 ),FinishingOption(
                     id: "10",
                     title: "Клинкерные термопанели",
-                    deltaRub: 450112, isDefaultSelected: false
+                    deltaRub: facade.clinkerTile, isDefaultSelected: false
                 ),FinishingOption(
                     id: "11",
                     title: "Консервация фасада",
-                    deltaRub: 68922, isDefaultSelected: false
+                    deltaRub: facade.facadeConservation, isDefaultSelected: false
                 )
             ]
         )
@@ -261,15 +263,15 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Виниловая J-фаска",
-                    deltaRub: 42732, isDefaultSelected: false
+                    deltaRub: gable.vinylJTrim, isDefaultSelected: false
                 ),FinishingOption(
                     id: "2",
                     title: "Металлическая L-планка",
-                    deltaRub: 69792, isDefaultSelected: false
+                    deltaRub: gable.metalLTrim, isDefaultSelected: false
                 ),FinishingOption(
                     id: "3",
                     title: "Дерево",
-                    deltaRub: 76765, isDefaultSelected: false
+                    deltaRub: gable.wood, isDefaultSelected: false
                 )
             ]
         )
@@ -289,19 +291,19 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Виниловые софиты",
-                    deltaRub: 64680, isDefaultSelected: false
+                    deltaRub: soffit.vinylSoffit, isDefaultSelected: false
                 ),FinishingOption(
                     id: "2",
                     title: "Фиброцементный сайдинг",
-                    deltaRub: 167624, isDefaultSelected: false
+                    deltaRub: soffit.fiberCementSiding, isDefaultSelected: false
                 ),FinishingOption(
                     id: "3",
                     title: "Дерево",
-                    deltaRub: 103817, isDefaultSelected: false
+                    deltaRub: soffit.wood, isDefaultSelected: false
                 ),FinishingOption(
                     id: "4",
                     title: "Металлические софиты",
-                    deltaRub: 107667, isDefaultSelected: false
+                    deltaRub: soffit.metalSoffit, isDefaultSelected: false
                 )
             ]
         )
@@ -319,13 +321,13 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "windows_1",
                     title: "Металлопластиковые окна и двери",
-                    deltaRub: windowsDoors.metalPlasticWindows,
+                    deltaRub: windowsDoors.aluminumDoors,
                     isDefaultSelected: false
                 ),
                 FinishingOption(
                     id: "windows_2",
                     title: "Алюминиевые двери",
-                    deltaRub: windowsDoors.aluminumDoors,
+                    deltaRub: windowsDoors.metalPlasticWindows,
                     isDefaultSelected: false
                 )
             ]
@@ -344,7 +346,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Деревянные горизонтальные типовые",
-                    deltaRub: 200928, isDefaultSelected: false
+                    deltaRub: terraces.terraceWaterproofing, isDefaultSelected: false
                 )
             ]
         )
@@ -359,7 +361,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "1",
                     title: "Шпатлевка и окрашивание",
-                    deltaRub: 53374, isDefaultSelected: false
+                    deltaRub: beamFinishing.puttyAndPaint, isDefaultSelected: false
                 )
             ]
         )
@@ -377,11 +379,11 @@ final class CalculatingTheHouseViewController: UIViewController {
             options: [FinishingOption(id: "1", title: "Террасная доска", deltaRub: 262559, isDefaultSelected: false),FinishingOption(
                 id: "1",
                 title: "Листовые материалы",
-                deltaRub: 182550, isDefaultSelected: false
+                deltaRub: decking.sheetMaterials, isDefaultSelected: false
             ),FinishingOption(
                 id: "1",
                 title: "Террасная доска искусственная (ДПК)",
-                deltaRub: 349796, isDefaultSelected: false
+                deltaRub: decking.compositeDecking, isDefaultSelected: false
             )
             ]
         )
@@ -470,6 +472,7 @@ final class CalculatingTheHouseViewController: UIViewController {
     // MARK: - Private properties
     
     var currentData: [Category] = []
+    private var filteredSections: [HouseProject] = []
     
     var selectedFinishingOptions: Set<String> = []
     var selectedEngineeringOptions: Set<String> = []
@@ -495,14 +498,45 @@ final class CalculatingTheHouseViewController: UIViewController {
     }()
     
     private let homeImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "home2014"))
+        let imageView = UIImageView(image: UIImage(named: "project127-14-3"))
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 12
         imageView.tintColor = .systemGray3
         imageView.contentMode = .center
         imageView.backgroundColor = .systemGray6
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
+    }()
+    
+    private let galleryContentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.currentPageIndicatorTintColor = .white
+        pageControl.pageIndicatorTintColor = .gray
+        pageControl.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        pageControl.layer.cornerRadius = 12
+        pageControl.clipsToBounds = true
+        pageControl.isUserInteractionEnabled = false
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        return pageControl
+    }()
+    
+    private let galleryScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.isPagingEnabled = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.backgroundColor = .systemGray6
+        scrollView.layer.cornerRadius = 12
+        scrollView.clipsToBounds = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
     }()
     
     private let segmentControl: UISegmentedControl = {
@@ -578,6 +612,8 @@ final class CalculatingTheHouseViewController: UIViewController {
             homeImageView.image = image
             homeImageView.contentMode = .scaleAspectFill
         }
+        
+        houseConfiguration = configurationService.getConfiguration(for: houseId)
         
         currentData = finishingData
         
@@ -816,6 +852,27 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
         ) as? CalculatingTheHouseCell else {
             return UITableViewCell()
         }
+        let house = currentData[indexPath.section].house[indexPath.row]
+//        let house = filteredSections[indexPath.section].house[indexPath.row]
+        cell.configureImagePage(images: [])
+        
+        if house.imageGallery.isEmpty,
+            let image = house.imageProject {
+            if let uiImage = UIImage(named: image) {
+                cell.configureImagePage(images: [uiImage])
+            } else {
+                cell.configureImagePage(images: [UIImage(systemName: "house.fill") ?? UIImage()])
+            }
+            
+        } else {
+            let uiImages = house.imageGallery.compactMap { UIImage(named: $0) }
+            cell.configureImagePage(images: uiImages)
+        }
+
+//        cell.delegate = self
+        return cell
+    
+        
         
         let option = currentData[indexPath.section].options[indexPath.row]
         let selectionType = currentData[indexPath.section].selectionType

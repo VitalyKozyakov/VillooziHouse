@@ -11,6 +11,42 @@ class CalculatingTheHouseCell: UITableViewCell {
     
     static let identifier = "CalculatingTheHouseCell"
     
+    private var images: [UIImage] = []
+    
+    private let cardView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(red: 0.74, green: 0.9, blue: 0.78, alpha: 1.0)
+        view.layer.cornerRadius = 16
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.isPagingEnabled = true
+        collectionView.backgroundColor = .clear
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(HouseImageCell.self, forCellWithReuseIdentifier: HouseImageCell.identifier)
+        return collectionView
+    }()
+    
+    private let pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        pageControl.currentPage = 0
+        pageControl.hidesForSinglePage = true
+        return pageControl
+    }()
+    
     private let nameMaterialLabel: UILabel = {
         let label = UILabel()
         label.textColor = ConstantsColor.colorText
@@ -54,8 +90,17 @@ class CalculatingTheHouseCell: UITableViewCell {
         nameMaterialLabel.text = nil
         priceMaterialLabel.text = nil
         selectButton.tintColor = .lightGray
+        
+        images = []
+        pageControl.currentPage = 0
     }
-    
+    func configureImagePage(images: [UIImage]) {
+        self.images = images
+        pageControl.numberOfPages = images.count
+        pageControl.currentPage = 0
+        collectionView.setContentOffset(.zero, animated: false)
+        collectionView.reloadData()
+    }
     
     func configure(
         with option: CalculatingTheHouseViewController.FinishingOption,
@@ -92,13 +137,34 @@ class CalculatingTheHouseCell: UITableViewCell {
         selectButton.setImage(UIImage(systemName: imageName), for: .normal)
         selectButton.tintColor = selected ? .systemBlue : .lightGray
     }
-    
+    @objc private func pageControlChanged(_ sender: UIPageControl) {
+        let x = CGFloat(sender.currentPage) * collectionView.bounds.width
+        collectionView.setContentOffset(CGPoint(x: x, y: 0), animated: true)
+    }
     private func setupCell() {
+        pageControl.addTarget(self, action: #selector(pageControlChanged(_:)), for: .valueChanged)
+        
+        contentView.addSubview(collectionView)
+        collectionView.addSubview(cardView)
+        cardView.addSubview(pageControl)
         contentView.addSubview(nameMaterialLabel)
         contentView.addSubview(priceMaterialLabel)
         contentView.addSubview(selectButton)
         
         NSLayoutConstraint.activate([
+            cardView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            cardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            cardView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            cardView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            
+            collectionView.topAnchor.constraint(equalTo: cardView.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 200),
+            
+            pageControl.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: -8),
+            pageControl.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            
             selectButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             selectButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             selectButton.heightAnchor.constraint(equalToConstant: 24),
@@ -127,6 +193,34 @@ class CalculatingTheHouseCell: UITableViewCell {
         //        onSelect?(isSelectedState)
     }
 }
+
+extension CalculatingTheHouseCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        images.count
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HouseImageCell.identifier, for: indexPath) as? HouseImageCell else {
+            return UICollectionViewCell()
+        }
+        cell.configure(with: images[indexPath.row])
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
+    }
+}
+extension CalculatingTheHouseCell: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let page = Int(scrollView.contentOffset.x / scrollView.frame.width)
+        pageControl.currentPage = page
+    }
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        let page = Int(scrollView.contentOffset.x / scrollView.frame.width)
+        
+    }
+}
+
 #Preview {
     let navigationController = UINavigationController(
         rootViewController: CalculatingTheHouseViewController(houseId: "124-14")

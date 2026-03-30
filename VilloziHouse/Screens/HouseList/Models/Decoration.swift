@@ -107,71 +107,71 @@ struct HouseConfiguration {
         self.houseId = houseId
         
         switch houseId {
-        case "124-14":
+        case "127-14":
             self.houseKit = HouseKit(
-                cutPanels: 1,
-                dryLumber: 2,
+                cutPanels: 399689,
+                dryLumber: 200000,
                 gluedBeam: 3,
                 fastener: 4,
                 powerFastener: 5,
                 insulationMaterials: 6,
-                professionalInstallation: 7,
-                foundationSlab: 8
+                professionalInstallation: 599689,
+                foundationSlab: 224000
             )
             
             self.roofingOptions = RoofingOptions(
-                metalTile: 604174,
-                bitumenShingle: 749206,
-                seamRoof: 902142,
-                corrugatedSheet: 660866,
-                builtUpRoof: 941905
+                metalTile: 226800,
+                bitumenShingle: 0,
+                seamRoof: 0,
+                corrugatedSheet: 0,
+                builtUpRoof: 321120
             )
             
             self.roofAccessories = RoofAccessories(
-                ventilationElements: 79947,
-                gutterSystem: 150330
+                ventilationElements: 41700,
+                gutterSystem: 22880
             )
             
             self.facadeOptions = FacadeOptions(
-                vinylSiding: 660861,
-                vinylPanels: 747432,
-                woodImitation: 997199,
-                fiberCementSiding: 1672795,
-                hauberkBrick: 1132981,
-                fold: 1128616,
-                wallCorrugatedSheet: 1128616,
-                metalSiding: 1017186,
-                clinkerTile: 2271363,
-                facadeConservation: 103306
+                vinylSiding: 411750,// Виниловый сайдинг
+                vinylPanels: 611550,// Виниловые фасадные панели
+                woodImitation: 0,// Деревянная отделка. Имитация бруса,
+                fiberCementSiding: 882900,// Фиброцементный сайдинг3 100,
+                hauberkBrick: 683100,// Фасад под кирпич Хауберк
+                fold: 0,// Фальц
+                wallCorrugatedSheet: 0,// Профнастил стеновой1128616,
+                metalSiding: 611750,// Металлический сайдинг
+                clinkerTile: 1411750,// Клинкерная плитка
+                facadeConservation: 94500// Консервация фасада
             )
             
             self.gableEndOptions = GableEndOptions(
-                vinylJTrim: 71250,
-                wood: 127997,
-                metalLTrim: 116371
+                vinylJTrim: 71250,// Виниловая J-фаска
+                wood: 127997,// Дерево
+                metalLTrim: 116371// Металлическая L-планка
             )
             
             self.soffitOptions = SoffitOptions(
-                vinylSoffit: 172658,
-                wood: 277132,
-                fiberCementSiding: 447458,
-                metalSoffit: 287410
+                vinylSoffit: 172658,// Виниловые софиты
+                wood: 277132,// Дерево
+                fiberCementSiding: 447458,// Фиброцементный сайдинг
+                metalSoffit: 287410// Металлические софиты
             )
             
             self.windowsDoors = WindowsDoors(
-                aluminumDoors: 250699,
-                metalPlasticWindows: 282646
+                aluminumDoors: 250699,// Алюминиевые двери
+                metalPlasticWindows: (289170 + 53600)// Металлопластиковые окна и двери
             )
             
             self.terraces = Terraces(
-                terraceWaterproofing: 280627,
-                beamFinishing: Terraces.BeamFinishing(puttyAndPaint: 54569)
+                terraceWaterproofing: 280627,// Гидроизоляция террас
+                beamFinishing: Terraces.BeamFinishing(puttyAndPaint: 54569)// Гидроизоляция террас
             )
             
             self.terraceDeckingOptions = TerraceDeckingOptions(
-                woodenDecking: 203562,
-                compositeDecking: 271197,
-                sheetMaterials: 141531
+                woodenDecking: 203562,// Террасная доска
+                compositeDecking: 271197,// Террасная доска искусственная (ДПК)
+                sheetMaterials: 141531// Листовые материалы
             )
         case "60-23":
             self.houseKit = HouseKit(

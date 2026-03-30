@@ -15,6 +15,7 @@ struct House {
     let bedrooms: Int
     let price: Double
     let imageProject: String?
+    var imageGallery: [String] = [] // ШАГ0
 //    let finishingCategories: [Category]
 //    let engineeringCategories: [Category]
     let categoriesPrices: [String: Double] = ["professional_montage": 50000, "professional_installation": 100000]

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+// ШАГ 1 - создали ячеку для размещения в ней картин
 final class HouseImageCell: UICollectionViewCell {
     static let identifier = "HouseImageCell"
     
@@ -34,7 +34,7 @@ final class HouseImageCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    // Сюда мы отправляем картинку houseImageView
     func configure(with image: UIImage?) {
         houseImageView.image = image
     }
