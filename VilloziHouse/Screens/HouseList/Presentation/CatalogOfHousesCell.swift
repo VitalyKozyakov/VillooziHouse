@@ -282,6 +282,6 @@ extension CatalogOfHousesCell: UIScrollViewDelegate {
 
 
 #Preview {
-    let viewController = CatalogOfHousesViewController()
+    let viewController = CatalogOfHousesViewController(dataSource: CatalogOfHousesDataSourse())
     return viewController
 }

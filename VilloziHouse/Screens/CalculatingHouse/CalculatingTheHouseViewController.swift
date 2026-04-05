@@ -510,7 +510,7 @@ final class CalculatingTheHouseViewController: UIViewController {
     }()
     
     private let segmentControl: UISegmentedControl = {
-        let items: [String] = ["Отделка", "Инженерия"]
+        let items: [String] = ["Отделка", "Инженерия","Характеристики"]
         let segmentControl = UISegmentedControl(items: items)
         segmentControl.selectedSegmentIndex = 0
         segmentControl.translatesAutoresizingMaskIntoConstraints = false
@@ -941,6 +941,8 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
+
+
 
 #Preview {
     let navigationController = UINavigationController(

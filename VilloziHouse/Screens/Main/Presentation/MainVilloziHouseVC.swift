@@ -7,6 +7,7 @@
 import UIKit
 
 final class MainVilloziHouseVC: UIViewController {
+    private let dataSource: CatalogOfHousesDataSourse
     
     private let topMenuItems: [MainVilloziHouseCellModel] = [
         .news,
@@ -35,7 +36,8 @@ final class MainVilloziHouseVC: UIViewController {
     ]
     
     private let tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .systemGray5
         tableView.separatorStyle = .none
@@ -46,8 +48,8 @@ final class MainVilloziHouseVC: UIViewController {
     
     private let headerContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray5
-//        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        //        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -77,7 +79,7 @@ final class MainVilloziHouseVC: UIViewController {
     private let profileView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 0, green: 1, blue: 0, alpha: 0.5)
-        view.layer.cornerRadius = 20
+        view.layer.cornerRadius = 30
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -115,14 +117,30 @@ final class MainVilloziHouseVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemGray5
         navigationController?.navigationBar.prefersLargeTitles = true
-//                title = "Villozi House"
+        //                title = "Villozi House"
         
         setupTableView()
         setupHeaderView()
+        
+        loadHousesWithDelay(completion: { houses in
+            print("houses \(houses)")
+        })
+    }
+    
+    init(dataSource: CatalogOfHousesDataSourse
+    ) {
+        self.dataSource = dataSource
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         navigationController?.isNavigationBarHidden = true
     }
     
@@ -157,56 +175,67 @@ final class MainVilloziHouseVC: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
     
     private func setupHeaderView() {
-//        headerContainerView.addSubview(cardView)
+        headerContainerView.addSubview(cardView)
         
-//        headerContainerView.addSubview(tvImageView)
-//        headerContainerView.addSubview(mapImageView)
+        //        headerContainerView.addSubview(tvImageView)
+        //        headerContainerView.addSubview(mapImageView)
         
-        headerContainerView.addSubview(logoImageView)
-        headerContainerView.addSubview(titleImageView)
-        headerContainerView.addSubview(profileView)
+        cardView.addSubview(logoImageView)
+        cardView.addSubview(titleImageView)
+        cardView.addSubview(profileView)
         headerContainerView.addSubview(bannerImageView)
         
         NSLayoutConstraint.activate([
-            logoImageView.topAnchor.constraint(equalTo: headerContainerView.topAnchor),
-            logoImageView.leadingAnchor.constraint(equalTo: headerContainerView.leadingAnchor, constant: 8),
-            logoImageView.heightAnchor.constraint(equalToConstant: 40),
-            logoImageView.widthAnchor.constraint(equalToConstant: 60),
-
-            titleImageView.topAnchor.constraint(equalTo: headerContainerView.topAnchor),
-            titleImageView.leadingAnchor.constraint(equalTo: logoImageView.trailingAnchor, constant: 4),
-            titleImageView.heightAnchor.constraint(equalToConstant: 40),
-//            titleImageView.widthAnchor.constraint(equalToConstant: 100),
-
-            profileView.topAnchor.constraint(equalTo: headerContainerView.topAnchor),
-            profileView.trailingAnchor.constraint(equalTo: headerContainerView.trailingAnchor, constant: -8),
-            profileView.widthAnchor.constraint(equalToConstant: 40),
-            profileView.heightAnchor.constraint(equalToConstant: 40),
-
-            bannerImageView.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 4),
+            cardView.topAnchor.constraint(equalTo: headerContainerView.topAnchor),
+            cardView.leadingAnchor.constraint(equalTo: headerContainerView.leadingAnchor),
+            cardView.trailingAnchor.constraint(equalTo: headerContainerView.trailingAnchor),
+            //            cardView.heightAnchor.constraint(equalToConstant: 80),
+            
+            logoImageView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 4),
+            logoImageView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 4),
+            logoImageView.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -4),
+            logoImageView.heightAnchor.constraint(equalToConstant: 80),
+            logoImageView.widthAnchor.constraint(equalToConstant: 80),
+            
+            titleImageView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 4),
+            titleImageView.leadingAnchor.constraint(equalTo: logoImageView.trailingAnchor, constant: -4),
+            titleImageView.trailingAnchor.constraint(equalTo: profileView.leadingAnchor, constant: -4),
+            titleImageView.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -4),
+            //            titleImageView.heightAnchor.constraint(equalToConstant: 40),
+            //            titleImageView.widthAnchor.constraint(equalToConstant: 300),
+            
+            profileView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 4),
+            profileView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -4),
+            profileView.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -4),
+            profileView.widthAnchor.constraint(equalToConstant: 60),
+            profileView.heightAnchor.constraint(equalToConstant: 60),
+            
+            bannerImageView.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 4),
             bannerImageView.leadingAnchor.constraint(equalTo: headerContainerView.leadingAnchor, constant: 4),
             bannerImageView.trailingAnchor.constraint(equalTo: headerContainerView.trailingAnchor, constant: -4),
-            bannerImageView.heightAnchor.constraint(equalToConstant: 300),
-            bannerImageView.bottomAnchor.constraint(equalTo: headerContainerView.bottomAnchor)
+            bannerImageView.heightAnchor.constraint(equalToConstant: 200),
+            bannerImageView.bottomAnchor.constraint(equalTo: headerContainerView.bottomAnchor, constant: -4)
+            
+            
         ])
         
-//        let width = view.bounds.width
-//        headerContainerView.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
+        //        let width = view.bounds.width
+        //        headerContainerView.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
         print("tableView width =", tableView.bounds.width)
-//        tableView.tableHeaderView = headerContainerView
-//        headerContainerView.layoutIfNeeded()
+        //        tableView.tableHeaderView = headerContainerView
+        //        headerContainerView.layoutIfNeeded()
     }
     
     private func handleSelection(_ item: MainVilloziHouseCellModel) {
         switch item {
         case .project:
-            print("Проекты домов")
+            navigateToCatalogOfHouses()
         case .news:
             print("Новости")
         case .reviews:
@@ -237,8 +266,28 @@ final class MainVilloziHouseVC: UIViewController {
             print("Назначенные/Прошедшие встречи")
         }
     }
+    
+    
+    private func navigateToCatalogOfHouses() {
+        let catalogVC = CatalogOfHousesViewController(dataSource: dataSource)
+        navigationController?.pushViewController(catalogVC, animated: true)
+    }
+    // как-то так
+    func loadHousesWithDelay(completion: @escaping ([House]) -> Void) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 5.0) {
+            let houses: [House] = [
+                House(id: "1", name: "new", dimensions: "10 * 10", area: 100, bedrooms: 8, price: 1900000, imageProject: "127-14-1"),
+                House(id: "2", name: "new", dimensions: "10 * 10", area: 100, bedrooms: 8, price: 1900000, imageProject: "127-14-1"),
+                House(id: "3", name: "new", dimensions: "10 * 10", area: 100, bedrooms: 8, price: 1900000, imageProject: "127-14-1")
+            ]
+            
+            DispatchQueue.main.async {
+                completion(houses)
+            }
+        }
+    }
+    
 }
-
 extension MainVilloziHouseVC: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         menuSections.count
@@ -265,8 +314,8 @@ extension MainVilloziHouseVC: UITableViewDataSource {
 
 extension MainVilloziHouseVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = menuSections[indexPath.section][indexPath.row]
-        tableView.deselectRow(at: indexPath, animated: true)
+            let item = menuSections[indexPath.section][indexPath.row]
+            tableView.deselectRow(at: indexPath, animated: true)
         handleSelection(item)
     }
     
@@ -295,8 +344,10 @@ extension MainVilloziHouseVC: UITableViewDelegate {
     }
 }
 
-#Preview {
-    UINavigationController(rootViewController: MainVilloziHouseVC())
+#Preview("Main Villozi House") {
+    let dataSource = CatalogOfHousesDataSourse()
+    let vc = MainVilloziHouseVC(dataSource: dataSource)
+    return UINavigationController(rootViewController: vc)
 }
 
 

@@ -10,6 +10,8 @@ import UIKit
 
 final class MainTabBarController: UITabBarController {
     
+    private let dataSource = CatalogOfHousesDataSourse()
+    
     // =========================================================================
     // MARK: - Жизненный цикл
     // =========================================================================
@@ -32,7 +34,7 @@ final class MainTabBarController: UITabBarController {
         //    • Возможность push/pop между экранами
         
         // Вкладка 1: Каталог проектов
-                let catalogVC = MainVilloziHouseVC()
+                let catalogVC = MainVilloziHouseVC(dataSource: dataSource)
         let catalogNav = UINavigationController(rootViewController: catalogVC)
         catalogNav.tabBarItem = UITabBarItem(
             title: "Главная",
@@ -41,7 +43,7 @@ final class MainTabBarController: UITabBarController {
         )
         
         // Вкладка 2: Избранное (заглушка)
-        let favoritesVC = CatalogOfHousesViewController()
+        let favoritesVC = CatalogOfHousesViewController(dataSource: dataSource)
         let favoritesNav = UINavigationController(rootViewController: favoritesVC)
         favoritesNav.tabBarItem = UITabBarItem(
             title: "Проекты",
@@ -67,10 +69,10 @@ final class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "person"),
             selectedImage: UIImage(systemName: "person.fill")
         )
-        let applicationVC = ApplicationVC(houseName: "Заявка", totalPrice: 0, formattedPrice: "ценник 70")
+        let applicationVC = FavoriteHouseVC(dataSource: dataSource)
         let applicationNav = UINavigationController(rootViewController: applicationVC)
         applicationNav.tabBarItem = UITabBarItem(
-            title: "Заявка",
+            title: "Избранное",
             image: UIImage(systemName: "pencil"),
             selectedImage: UIImage(systemName: "pencil.fill")
         )

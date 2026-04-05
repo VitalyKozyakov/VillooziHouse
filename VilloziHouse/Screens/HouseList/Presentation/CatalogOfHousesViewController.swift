@@ -7,12 +7,15 @@
 
 import UIKit
 
+
+
 class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
     // MARK: - Private properties
     
-    private let dataSourse = CatalogOfHousesDataSourse()
+    //    private let dataSourse = CatalogOfHousesDataSourse()
     private var allSections: [HouseProject] = []
     private var filteredSections: [HouseProject] = []
+    private let dataSource: CatalogOfHousesDataSourse
     
     // MARK: - UI
     
@@ -52,9 +55,23 @@ class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
         super.viewDidLoad()
         setupViewController()
         setupTableView()
-        loadData()
+        loadFavoriteStatus()
     }
     
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateData()
+    }
+    
+    init(dataSource: CatalogOfHousesDataSourse) {
+        self.dataSource = dataSource
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     // MARK: - Setup view
     
     private func setupViewController() {
@@ -94,14 +111,6 @@ class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
         view.addGestureRecognizer(tapGesture)
     }
     
-    private func loadData() {
-        allSections = dataSourse.getHouse()
-        filteredSections = allSections
-        tableView.reloadData()
-        
-        pickerView.selectRow(0, inComponent: 0, animated: false)
-    }
-    
     private func filterSections(selectedIndex: Int) {
         if selectedIndex == 0 {
             filteredSections = allSections
@@ -117,9 +126,67 @@ class CatalogOfHousesViewController: UIViewController, HouseCellDelegate {
         }
     }
     
-    func didToggleFavorite(in cell: CatalogOfHousesCell, state: Bool) {
-        //        model.isFavourite = state
+    private func loadFavoriteStatus() {
+        let favorites = UserDefaults.standard.array(forKey: "favoriteHouses") as? [String] ?? []
+        
+        allSections = dataSource.getHouse()
+        
+        for sectionIndex in 0..<allSections.count { // проходимся по секциям
+            for houseIndex in 0..<allSections[sectionIndex].house.count { // проходим по каждому оюъекту в секции
+                var house = allSections[sectionIndex].house[houseIndex] // берем каждый объект
+                house.isFavorite = favorites.contains(house.id) // обновляем свойство isFavorite, если айди дома в избранном на true, если не в избранном то фолс
+                allSections[sectionIndex].house[houseIndex] = house // перезаписываем объект с новым значением
+            }
+        }
+        
+        dataSource.saveHouses(allSections)
+        
+        filteredSections = allSections
+        tableView.reloadData()
+        
+        pickerView.selectRow(0, inComponent: 0, animated: false)
     }
+    
+    private func updateData() {
+        allSections = dataSource.getHouse()
+        
+        let selectedRow = pickerView.selectedRow(inComponent: 0)
+        
+        if selectedRow == 0 {
+            filteredSections = allSections
+        } else if selectedRow - 1 < allSections.count {
+            filteredSections = [allSections[selectedRow - 1]]
+        } else {
+            filteredSections = allSections
+        }
+        
+        tableView.reloadData()
+    }
+    
+    func didToggleFavorite(in cell: CatalogOfHousesCell, state: Bool) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        
+        filteredSections[indexPath.section].house[indexPath.row].isFavorite = state
+        let houseId = filteredSections[indexPath.section].house[indexPath.row].id
+        
+        for sectionIndex in 0..<allSections.count {
+            for rowIndex in 0..<allSections[sectionIndex].house.count {
+                if allSections[sectionIndex].house[rowIndex].id == houseId {
+                    allSections[sectionIndex].house[rowIndex].isFavorite = state
+                }
+            }
+        }
+        
+        dataSource.saveHouses(allSections)
+        
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+        
+        let house = filteredSections[indexPath.section].house[indexPath.row]
+        saveFavoriteStatus(for: house.id, isFavorite: state)
+    }
+    
+    
+    
     private func saveFavoriteStatus(for houseId: String, isFavorite: Bool) {
         var favorites = UserDefaults.standard.array(forKey: "favoriteHouses") as? [String] ?? []
         
@@ -179,7 +246,7 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
         cell.configure(with: house)
         //ШАГ1
         if house.imageGallery.isEmpty,
-            let image = house.imageProject {
+           let image = house.imageProject {
             if let uiImage = UIImage(named: image) {
                 cell.configure(images: [uiImage])
             } else {
@@ -190,7 +257,7 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
             let uiImages = house.imageGallery.compactMap { UIImage(named: $0) }
             cell.configure(images: uiImages)
         }
-
+        
         cell.delegate = self
         return cell
     }
@@ -263,6 +330,7 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
             houseImages: houseImages
         )
         
+        //        navigationController?.present(calculatingVC, animated: true)
         navigationController?.pushViewController(calculatingVC, animated: true)
     }
 }
@@ -293,7 +361,8 @@ extension CatalogOfHousesViewController: UIPickerViewDelegate, UIPickerViewDataS
     }
 }
 #Preview(traits: .portrait) {
-    let homeVC = CatalogOfHousesViewController()
+    let dataSource = CatalogOfHousesDataSourse()
+    let homeVC = CatalogOfHousesViewController(dataSource: dataSource)
     let navigationController = UINavigationController(rootViewController: homeVC)
     return navigationController
 }

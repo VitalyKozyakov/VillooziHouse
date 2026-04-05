@@ -922,5 +922,84 @@ extension ApplicationViewController {
     }
     
     
+    func closuress() {
+        func sayHello() {
+            print("Привет!")
+        }
+        
+        sayHello()
+        
+        let helloClosure: () -> Void = {
+            print("Привет!")
+        }
+        
+        helloClosure()
+        
+        var counter = 0
+        
+        let increment = {
+            counter += 1
+            print("Счётчик: \(counter)")
+        }
+        
+        increment() // 1
+        increment() // 2
+        
+        // () -> Void
+        
+        // (Int) -> Void
+        // (Int, Int) -> Int
+        
+        let printPrice: (Int) -> Void = { price in
+            print("Цена: \(price) ₽")
+        }
+
+        printPrice(350)
+        
+        let sum: (Int, Int) -> Int = { a, b in
+            return a + b
+        }
+
+        let result = sum(5, 7)
+        print(result)
+        
+        let multiply: (Int, Int) -> Int = { (a: Int, b: Int) -> Int in
+            return a * b
+        }
+        
+        let multiply2: (Int, Int) -> Int = { a, b in
+            a * b
+        }
+        
+        let multiply4: (Int, Int) -> Int = {
+            $0 * $1
+        }
+        
+        // when to use $0
+        
+        let titles = ["Латте", "Чай", "Какао"].map { /*title in title.uppercased()*/ $0.uppercased() }
+        
+        
+        func performAction(test: String, action: () -> Void) {
+            print("Сейчас выполню действие")
+            action()
+            print("Действие завершено")
+        }
+        
+        performAction(test: "Test", action: {
+            print("Нажали hello")
+        })
+        
+        performAction(test: "Test") {
+            print("Нажали кнопку")
+        }
+        
+        performAction(test: "Test") {
+            print("Нажали TOGGLE")
+        }
+        
+        
+        
+    }
 }
 

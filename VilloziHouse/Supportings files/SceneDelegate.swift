@@ -27,6 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = MainTabBarController()
         
         window.rootViewController = tabBarController
+//        window.rootViewController = UINavigationController(rootViewController: MenuViewController(service: MockMenuService()))
         self.window = window
         
         // 📚 makeKeyAndVisible() — делает окно:

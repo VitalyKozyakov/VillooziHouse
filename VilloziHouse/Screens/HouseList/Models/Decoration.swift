@@ -111,10 +111,10 @@ struct HouseConfiguration {
             self.houseKit = HouseKit(
                 cutPanels: 399689,
                 dryLumber: 200000,
-                gluedBeam: 3,
-                fastener: 4,
-                powerFastener: 5,
-                insulationMaterials: 6,
+                gluedBeam: 367524,
+                fastener: 41569,
+                powerFastener: 545879,
+                insulationMaterials: 62377,
                 professionalInstallation: 599689,
                 foundationSlab: 224000
             )
