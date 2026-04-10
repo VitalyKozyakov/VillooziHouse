@@ -192,6 +192,7 @@ final class ApplicationViewController: UIViewController {
         setupNavigationBar()
         setupUI()
         setupKeyboardHandling()
+        closuress()
     }
 
     // 📚 viewWillAppear — каждый раз при появлении экрана
@@ -998,8 +999,91 @@ extension ApplicationViewController {
             print("Нажали TOGGLE")
         }
         
+        func loadMenu(completion: ([String]) -> Void) {
+            let items = ["Капучино", "Латте", "Американо"]
+            completion(items)
+        }
         
+        loadMenu {
+            print("Loaded \($0.count) menu items. Menu items: \($0)")
+        }
         
+        loadMenu { items in
+            print(items.count)
+        }
+
+        loadMenu { items in
+            print(items.joined(separator: ", "))
+        }
+
+        loadMenu { items in
+            let cheapItems = items.filter { $0.count < 7 }
+            print(cheapItems)
+        }
+        
+        func loadMenuAndPrintCount() {
+            let items = ["Капучино", "Латте", "Американо"]
+            print("Количество: \(items.count)")
+        }
+        
+        func loadMenu() -> [String] {
+            ["Капучино", "Латте", "Американо"]
+        }
+
+        let items = loadMenu()
+        print("Загружено позиций: \(items.count)")
+        print("Загружено позиций: \(items.count)")
+        print("Загружено позиций: \(items.count)")
+        
+        func test() {
+            let items = loadMenu()
+            print("Загружено позиций: \(items.count)")
+        }
+        
+        func test2() {
+            let items = loadMenu()
+            print("Загружено позиций: \(items.count)")
+            
+            loadMenu { items in
+                        let cheapItems = items.filter { $0.count < 7 }
+                        print(cheapItems)
+                    }
+        }
+        
+        func loadMenuFromServer(completion: @escaping ([String]) -> Void) {
+            print("Начали загрузку...")
+
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+                let items = ["Капучино", "Латте", "Амеркано"]
+                completion(items)
+            }
+        }
+        
+        loadMenuFromServer {
+            print($0)
+        }
+        
+        func didTapSendApplication() {
+            print("Показываем внутри кнопки загрузку")
+            submitForm(completion: { isSuccess in
+                print("Скрываем индикатор загрузки в кнопке")
+                if isSuccess {
+                    print("Показать экран успеха")
+                } else {
+                    print("Показать ошибку")
+                }
+            })
+        }
+        
+        didTapSendApplication()
+        
+        func submitForm(completion: @escaping (Bool) -> Void) {
+            print("Отправляем заявку...")
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                completion(false)
+            }
+        }
     }
 }
 

@@ -481,15 +481,28 @@ final class ApplicationVC: UIViewController {
         guard validateForm() else { return }
         
         submitButton.isEnabled = false
-        submitButton.setTitle("Заявка отправлена...", for: .normal)
+        submitButton.setTitle("Заявка отправляется...", for: .normal)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-            self?.showSuccessScreen()
-        }
+        submitForm(completion: { isSuccess in
+            
+            if isSuccess {
+                self.submitButton.setTitle("Заявка отправлена...", for: .normal)
+                self.showSuccessScreen()
+            } else {
+                self.submitButton.isEnabled = true
+                self.submitButton.setTitle("Заявка не отправлена", for: .normal)
+            }
+        })
     }
     
     @objc private func doneButtonTapped() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    func submitForm(completion: @escaping (Bool) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            completion(true)
+        }
     }
     
     private func showSuccessScreen() {

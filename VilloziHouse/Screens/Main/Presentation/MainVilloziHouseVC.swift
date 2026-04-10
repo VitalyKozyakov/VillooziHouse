@@ -241,7 +241,7 @@ final class MainVilloziHouseVC: UIViewController {
         case .reviews:
             print("Отзывы")
         case .about:
-            print("О нас")
+            navigateGameBoardView()
         case .nedom:
             print("Недом")
         case .designing:
@@ -272,6 +272,11 @@ final class MainVilloziHouseVC: UIViewController {
         let catalogVC = CatalogOfHousesViewController(dataSource: dataSource)
         navigationController?.pushViewController(catalogVC, animated: true)
     }
+    private func navigateGameBoardView() {
+        let gameBoardVC = GameBoardViewController()
+        navigationController?.pushViewController(gameBoardVC, animated: true)
+            }
+    
     // как-то так
     func loadHousesWithDelay(completion: @escaping ([House]) -> Void) {
         DispatchQueue.global().asyncAfter(deadline: .now() + 5.0) {
@@ -341,6 +346,41 @@ extension MainVilloziHouseVC: UITableViewDelegate {
         let view = UIView()
         view.backgroundColor = .clear
         return view
+    }
+}
+class GameBoardViewController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupGameBoard()
+        setupNavigation()
+    }
+    
+    private func setupGameBoard() {
+        // Создаём и добавляем GameBoardView
+        let gameBoardView = GameBoardView()
+        gameBoardView.translatesAutoresizingMaskIntoConstraints = false
+        gameBoardView.backgroundColor = .white
+        
+        view.addSubview(gameBoardView)
+        
+        NSLayoutConstraint.activate([
+            gameBoardView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            gameBoardView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            gameBoardView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            gameBoardView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    private func setupNavigation() {
+        title = "Game Board"
+        view.backgroundColor = .white
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Показываем navigation bar
+        navigationController?.isNavigationBarHidden = false
     }
 }
 
