@@ -10,6 +10,8 @@ import UIKit
 
 final class MainTabBarController: UITabBarController {
     
+    private let dataSource = CatalogOfHousesDataSourse()
+    
     // =========================================================================
     // MARK: - Жизненный цикл
     // =========================================================================
@@ -32,28 +34,29 @@ final class MainTabBarController: UITabBarController {
         //    • Возможность push/pop между экранами
         
         // Вкладка 1: Каталог проектов
-                let catalogVC = CalculatingTheHouseViewController()
+                let catalogVC = MainVilloziHouseVC(dataSource: dataSource)
         let catalogNav = UINavigationController(rootViewController: catalogVC)
         catalogNav.tabBarItem = UITabBarItem(
-            title: "Проекты",
+            title: "Главная",
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
         )
         
         // Вкладка 2: Избранное (заглушка)
-        let favoritesVC = PlaceholderViewController(title: "Избранное", icon: "heart")
+        let favoritesVC = CatalogOfHousesViewController(dataSource: dataSource)
         let favoritesNav = UINavigationController(rootViewController: favoritesVC)
         favoritesNav.tabBarItem = UITabBarItem(
-            title: "Избранное",
+            title: "Проекты",
             image: UIImage(systemName: "heart"),
             selectedImage: UIImage(systemName: "heart.fill")
         )
         
         // Вкладка 3: Сравнение (заглушка)
-        let compareVC = PlaceholderViewController(title: "Сравнение", icon: "square.split.2x1")
+        let defaultHouseId = "124-14"
+        let compareVC = CalculatingTheHouseViewController(houseId: defaultHouseId)
         let compareNav = UINavigationController(rootViewController: compareVC)
         compareNav.tabBarItem = UITabBarItem(
-            title: "Сравнение",
+            title: "Расчет",
             image: UIImage(systemName: "square.split.2x1"),
             selectedImage: UIImage(systemName: "square.split.2x1.fill")
         )
@@ -66,10 +69,10 @@ final class MainTabBarController: UITabBarController {
             image: UIImage(systemName: "person"),
             selectedImage: UIImage(systemName: "person.fill")
         )
-        let applicationVC = ApplicationVC(houseName: "Заявка", totalPrice: 0)
+        let applicationVC = FavoriteHouseVC(dataSource: dataSource)
         let applicationNav = UINavigationController(rootViewController: applicationVC)
         applicationNav.tabBarItem = UITabBarItem(
-            title: "Заявка",
+            title: "Избранное",
             image: UIImage(systemName: "pencil"),
             selectedImage: UIImage(systemName: "pencil.fill")
         )
@@ -85,6 +88,7 @@ final class MainTabBarController: UITabBarController {
     private func setupAppearance() {
         // 📚 UITabBarAppearance — настройка внешнего вида TabBar
         let appearance = UITabBarAppearance()
+        title = "VilloziHouse"
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .systemBackground
         
