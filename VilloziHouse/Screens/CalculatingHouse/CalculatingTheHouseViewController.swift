@@ -13,6 +13,17 @@ final class CalculatingTheHouseViewController: UIViewController {
     enum DataType {
         case finishing
         case engineering
+        case characteristics
+    }
+    
+    struct CharacteristicItem {
+        let title: String
+        let value: String
+    }
+    
+    struct CharacteristicSection {
+        let title: String
+        let options: [CharacteristicItem]
     }
     
     struct Category {
@@ -44,6 +55,40 @@ final class CalculatingTheHouseViewController: UIViewController {
     
     // MARK: - Data
     
+    private var characteristicsSections: [CharacteristicSection] {
+        return [
+            CharacteristicSection(
+                title: "1 этаж",
+                options: [
+                    CharacteristicItem(title: "Высота стен", value: "2,8м"),
+                    CharacteristicItem(title: "Перекрытие этажа", value: "СИП-ОСП 171мм"),
+                    CharacteristicItem(title: "Внешние стены", value: "СИП-ОСП 171мм"),
+                    CharacteristicItem(title: "Внутренние перегородки", value: "Каркас 145мм")
+                ]
+            ),
+            CharacteristicSection(
+                title: "2 этаж",
+                options: [
+                    CharacteristicItem(title: "Перекрытие этажа", value: "СИП-ОСП 171мм")
+                ]
+            ),
+            CharacteristicSection(
+                title: "Мансарда",
+                options: [
+                    CharacteristicItem(title: "Высота стен", value: "2,5м-2,8м"),
+                    CharacteristicItem(title: "Внешние стены", value: "СИП-ОСП 171мм"),
+                    CharacteristicItem(title: "Внутренние перегородки", value: "Каркас 145мм")
+                ]
+            ),
+            CharacteristicSection(
+                title: "Крыша",
+                options: [
+                    CharacteristicItem(title: "Крыша", value: "СИП-ОСП 221мм")
+                ]
+            )
+        ]
+    }
+    
     var finishingData: [Category] {
         return [
             createHouseKitCategory(),
@@ -68,7 +113,8 @@ final class CalculatingTheHouseViewController: UIViewController {
             powerFastener: 0,//силовой крепеж
             insulationMaterials: 0,//изоляционные материалы
             professionalInstallation: 0,//профессиональный монтаж
-            foundationSlab: 0//фундамент
+            foundationSlab: 0,//фундамент
+            household: 0 //бытовка
         )
         
         return Category(
@@ -78,12 +124,14 @@ final class CalculatingTheHouseViewController: UIViewController {
                 FinishingOption(
                     id: "kit_1",
                     title: "Набор раскроенных панелей",
-                    deltaRub: kit.cutPanels, isDefaultSelected: true
+                    deltaRub: kit.cutPanels,
+                    isDefaultSelected: true
                 ),
                 FinishingOption(
                     id: "kit_2",
                     title: "Пиломатериал сухой строганый",
-                    deltaRub: kit.dryLumber, isDefaultSelected: true
+                    deltaRub: kit.dryLumber,
+                    isDefaultSelected: true
                 ),
                 FinishingOption(
                     id: "kit_3",
@@ -239,7 +287,7 @@ final class CalculatingTheHouseViewController: UIViewController {
                     deltaRub: facade.metalSiding, isDefaultSelected: false
                 ),FinishingOption(
                     id: "10",
-                    title: "Клинкерные термопанели",
+                    title: "Клинкерная плитка",
                     deltaRub: facade.clinkerTile, isDefaultSelected: false
                 ),FinishingOption(
                     id: "11",
@@ -316,17 +364,17 @@ final class CalculatingTheHouseViewController: UIViewController {
         
         return Category(
             title: "Окна и двери",
-            selectionType: .single,
+            selectionType: .multiple,
             options: [
                 FinishingOption(
                     id: "windows_1",
-                    title: "Металлопластиковые окна и двери",
+                    title: "Алюминиевые двери",
                     deltaRub: windowsDoors.aluminumDoors,
                     isDefaultSelected: false
                 ),
                 FinishingOption(
                     id: "windows_2",
-                    title: "Алюминиевые двери",
+                    title: "Металлопластиковые окна и двери",
                     deltaRub: windowsDoors.metalPlasticWindows,
                     isDefaultSelected: false
                 )
@@ -376,7 +424,7 @@ final class CalculatingTheHouseViewController: UIViewController {
         return Category(
             title: "Настил на террасах",
             selectionType: .single,
-            options: [FinishingOption(id: "1", title: "Террасная доска", deltaRub: 262559, isDefaultSelected: false),FinishingOption(
+            options: [FinishingOption(id: "1", title: "Террасная доска", deltaRub: decking.woodenDecking, isDefaultSelected: false),FinishingOption(
                 id: "1",
                 title: "Листовые материалы",
                 deltaRub: decking.sheetMaterials, isDefaultSelected: false
@@ -394,7 +442,12 @@ final class CalculatingTheHouseViewController: UIViewController {
             title: "Отопление",
             selectionType: .single,
             options: [
-                FinishingOption(id: "h1", title: "Электрический котел", deltaRub: 85000, isDefaultSelected: false),
+                FinishingOption(
+                    id: "h1",
+                    title: "Электрический котел",
+                    deltaRub: 85000,
+                    isDefaultSelected: false
+                ),
                 FinishingOption(id: "h2", title: "Газовый котел", deltaRub: 120000, isDefaultSelected: false),
                 FinishingOption(id: "h3", title: "Твердотопливный котел", deltaRub: 95000, isDefaultSelected: false),
                 FinishingOption(id: "h4", title: "Тепловой насос", deltaRub: 350000, isDefaultSelected: false),
@@ -471,7 +524,21 @@ final class CalculatingTheHouseViewController: UIViewController {
     
     // MARK: - Private properties
     
-    var currentData: [Category] = []
+    var currentData: [Category] {
+        switch segmentControl.selectedSegmentIndex {
+            case 0:
+            return finishingData
+        case 1:
+            return engineeringData
+        default:
+            return finishingData
+        }
+    }
+    
+    private var isCharacteristicsTab: Bool {
+        return segmentControl.selectedSegmentIndex == 2
+    }
+    
     private var filteredSections: [HouseProject] = []
     
     var selectedFinishingOptions: Set<String> = []
@@ -587,7 +654,7 @@ final class CalculatingTheHouseViewController: UIViewController {
         
         houseConfiguration = configurationService.getConfiguration(for: houseId)
         
-        currentData = finishingData
+//        currentData = finishingData
         
         finishingSelectedSingleRow = Array(repeating: nil, count: finishingData.count)
         finishingSelectedMultipleRows = Array(repeating: [], count: finishingData.count)
@@ -601,6 +668,10 @@ final class CalculatingTheHouseViewController: UIViewController {
         setupUI()
         updateTotalPriceLabel()
         setupTableHeader()
+        
+        if segmentControl.selectedSegmentIndex == 2 {
+            tableView.reloadData()
+        }
     }
     
     // MARK: - Configure UI
@@ -670,6 +741,10 @@ final class CalculatingTheHouseViewController: UIViewController {
         tableView.register(
             CalculatingTheHouseCell.self,
             forCellReuseIdentifier: CalculatingTheHouseCell.identifier
+        )
+        tableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: "CharacteristicCell"
         )
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableView.automaticDimension
@@ -809,13 +884,18 @@ final class CalculatingTheHouseViewController: UIViewController {
         return formatter.string(from: NSNumber(value: price)) ?? "\(price)"
     }
     
+//    @objc func segmentChanged() {
+//        UIView.transition(with: tableView, duration: 0.3, options: .transitionCrossDissolve, animations: {
+//            if self.segmentControl.selectedSegmentIndex == 0 {
+//                self.currentData = self.finishingData
+//            } else {
+//                self.currentData = self.engineeringData
+//            }
+//            self.tableView.reloadData()
+//        }, completion: nil)
+//    }
     @objc func segmentChanged() {
         UIView.transition(with: tableView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-            if self.segmentControl.selectedSegmentIndex == 0 {
-                self.currentData = self.finishingData
-            } else {
-                self.currentData = self.engineeringData
-            }
             self.tableView.reloadData()
         }, completion: nil)
     }
@@ -825,18 +905,52 @@ final class CalculatingTheHouseViewController: UIViewController {
 
 extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return currentData.count
-    }
+        if isCharacteristicsTab {
+                    return characteristicsSections.count
+                }
+                return currentData.count
+            }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return currentData[section].options.count
-    }
+        if isCharacteristicsTab {
+                    return characteristicsSections[section].options.count
+                }
+                return currentData[section].options.count
+            }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return currentData[section].title
-    }
+        if isCharacteristicsTab {
+                    return characteristicsSections[section].title
+                }
+                return currentData[section].title
+            }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if isCharacteristicsTab {
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: "CharacteristicCell",
+                        for: indexPath
+                    )
+                    
+                    let item = characteristicsSections[indexPath.section].options[indexPath.row]
+                    
+                    // Настройка ячейки с двумя лейблами (слева - параметр, справа - значение)
+                    var config = cell.defaultContentConfiguration()
+                    config.text = item.title
+                    config.secondaryText = item.value
+                    config.textProperties.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+                    config.secondaryTextProperties.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+                    config.secondaryTextProperties.color = .systemGray
+                    config.textProperties.color = .label
+                    
+                    cell.contentConfiguration = config
+                    cell.selectionStyle = .none // без выделения
+                    cell.backgroundColor = .white
+                    
+                    return cell
+                }
+        
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: CalculatingTheHouseCell.identifier,
             for: indexPath
@@ -893,6 +1007,10 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if isCharacteristicsTab {
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    return
+                }
         
         let selectionType = currentData[indexPath.section].selectionType
         let isFinishing = segmentControl.selectedSegmentIndex == 0
@@ -946,7 +1064,7 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
 
 #Preview {
     let navigationController = UINavigationController(
-        rootViewController: CalculatingTheHouseViewController(houseId: "project127-14-01")
+        rootViewController: CalculatingTheHouseViewController(houseId: "127-14-01")
     )
     return navigationController
 }

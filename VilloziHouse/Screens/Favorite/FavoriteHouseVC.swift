@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FavoriteHouseVC: UIViewController, HouseCellDelegate {
+class FavoriteHouseVC: UIViewController/*, HouseCellDelegate*/ {
     
     private var favoriteHouses: [House] = []
     private let dataSource: CatalogOfHousesDataSourse
@@ -85,16 +85,14 @@ class FavoriteHouseVC: UIViewController, HouseCellDelegate {
     private func loadFavoritesFromUserDefaults() {
         let favoriteIds = UserDefaults.standard.array(forKey: "favoriteHouses") as? [String] ?? []
         
-        let allProjects = dataSource.getHouse()
+        let allHouses = dataSource.getHouses()
         
         var favorites: [House] = []
-        for project in allProjects {
-            for house in project.house where favoriteIds.contains(house.id) {
-                var favoriteHouse = house
-                favoriteHouse.isFavorite = true
-                favorites.append(favoriteHouse)
-            }
-        }
+                for house in allHouses where favoriteIds.contains(house.id) {
+                    var favoriteHouse = house
+                    favoriteHouse.isFavorite = true
+                    favorites.append(favoriteHouse)
+                }
         
         favoriteHouses = favorites
         tableView.reloadData()
@@ -127,17 +125,16 @@ class FavoriteHouseVC: UIViewController, HouseCellDelegate {
     }
     
     private func updateFavoriteStatusInDataSource(houseId: String, isFavorite: Bool) {
-        var allProjects = dataSource.getHouse()
+        var allHouses = dataSource.getHouses()
         
-        for sectionIndex in 0..<allProjects.count {
-            for rowIndex in 0..<allProjects[sectionIndex].house.count {
-                if allProjects[sectionIndex].house[rowIndex].id == houseId {
-                    allProjects[sectionIndex].house[rowIndex].isFavorite = isFavorite
+        for index in 0..<allHouses.count {
+                    if allHouses[index].id == houseId {
+                        allHouses[index].isFavorite = isFavorite
+                        break
+                    }
                 }
-            }
-        }
         
-        dataSource.saveHouses(allProjects)
+        dataSource.saveHouses(allHouses)
     }
 }
 
@@ -170,7 +167,7 @@ extension FavoriteHouseVC: UITableViewDataSource, UITableViewDelegate {
             cell.configure(images: uiImages)
         }
         
-        cell.delegate = self
+//        cell.delegate = self
         return cell
     }
     

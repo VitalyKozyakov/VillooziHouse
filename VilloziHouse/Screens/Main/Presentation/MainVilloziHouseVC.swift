@@ -9,28 +9,41 @@ import UIKit
 final class MainVilloziHouseVC: UIViewController {
     private let dataSource: CatalogOfHousesDataSourse
     
-    private let topMenuItems: [MainVilloziHouseCellModel] = [
-        .news,
-        .project,
-        .reviews,
-        .about,
-        .nedom,
-        .designing,
-        .mortgage,
-        .video,
-        .map,
-        .ownProduction,
-        .contacts
+    private lazy var topMenuItems: [MainMenuItem] = [
+        MainMenuItem(model: .news, action: { [weak self] in self?.showNews(title: "News")}),
+        MainMenuItem(model: .project, action: { [weak self] in self?.navigateToCatalogOfHouses()}),
+        MainMenuItem(model: .reviews, action: { [weak self] in self?.showNews(title: "Reviews")}),
+        MainMenuItem(model: .about,action: { [weak self] in self?.navigationTimeVC()}),
+        MainMenuItem(model: .nedom,action: { [weak self] in self?.navigationTimeVC()}),
+        MainMenuItem(model: .designing, action: { [weak self] in self?.navigationTimeVC()}),
+        MainMenuItem(model: .mortgage, action: { [weak self] in self?.navigationTimeVC()}),
+        MainMenuItem(model: .video,action: { [weak self] in self?.navigationTimeVC()}),
+        MainMenuItem(model: .map,action: { [weak self] in self?.navigationTimeVC()}),
+        MainMenuItem(model: .ownProduction, action: { [weak self] in self?.navigationTimeVC()}),
+        MainMenuItem(model: .contacts, action: { [weak self] in self?.navigationTimeVC()}),
     ]
     
-    private let bottomMenuItems: [MainVilloziHouseCellModel] = [
-        .favourites,
-        .documents,
-        .progressOfWork,
-        .assignedPastMeetings
+    private lazy var bottomMenuItems: [MainMenuItem] = [
+        MainMenuItem(
+            model: .favourites,
+            action: { [weak self] in
+                self?.showNews(title: "Favourites")
+            }
+        ),
+        MainMenuItem(
+            model: .documents,
+            action: { [weak self] in
+                self?.showNews(title: "Document")
+            }
+        )
+        
+//        .favourites,
+//        .documents,
+//        .progressOfWork,
+//        .assignedPastMeetings
     ]
     
-    private lazy var menuSections: [[MainVilloziHouseCellModel]] = [
+    private lazy var menuSections: [[MainMenuItem]] = [
         topMenuItems,
         bottomMenuItems
     ]
@@ -87,7 +100,7 @@ final class MainVilloziHouseVC: UIViewController {
     
     private let bannerImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "project127-14-01")
+        imageView.image = UIImage(named: "127-14-01")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 16
@@ -232,6 +245,10 @@ final class MainVilloziHouseVC: UIViewController {
         //        headerContainerView.layoutIfNeeded()
     }
     
+    private func showNews(title: String) {
+        print(title)
+    }
+    
     private func handleSelection(_ item: MainVilloziHouseCellModel) {
         switch item {
         case .project:
@@ -241,7 +258,7 @@ final class MainVilloziHouseVC: UIViewController {
         case .reviews:
             print("Отзывы")
         case .about:
-            navigateGameBoardView()
+            print("О нас")
         case .nedom:
             print("Недом")
         case .designing:
@@ -267,15 +284,19 @@ final class MainVilloziHouseVC: UIViewController {
         }
     }
     
-    
+//    переход на другую страницу
     private func navigateToCatalogOfHouses() {
         let catalogVC = CatalogOfHousesViewController(dataSource: dataSource)
         navigationController?.pushViewController(catalogVC, animated: true)
     }
-    private func navigateGameBoardView() {
-        let gameBoardVC = GameBoardViewController()
-        navigationController?.pushViewController(gameBoardVC, animated: true)
-            }
+    private func navigationTimeVC() {
+        let timeVC = TimeVC()
+        navigationController?.pushViewController(timeVC, animated: true)
+    }
+//    private func navigateGameBoardView() {
+//        let gameBoardVC = GameBoardViewController()
+//        navigationController?.pushViewController(gameBoardVC, animated: true)
+//            }
     
     // как-то так
     func loadHousesWithDelay(completion: @escaping ([House]) -> Void) {
@@ -312,16 +333,17 @@ extension MainVilloziHouseVC: UITableViewDataSource {
         }
         
         let item = menuSections[indexPath.section][indexPath.row]
-        cell.configure(with: item)
+        cell.configure(with: item.model)
         return cell
     }
 }
 
 extension MainVilloziHouseVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            let item = menuSections[indexPath.section][indexPath.row]
-            tableView.deselectRow(at: indexPath, animated: true)
-        handleSelection(item)
+        let item = menuSections[indexPath.section][indexPath.row]
+        tableView.deselectRow(at: indexPath, animated: true)
+        item.action()
+//        handleSelection(item)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -348,41 +370,7 @@ extension MainVilloziHouseVC: UITableViewDelegate {
         return view
     }
 }
-class GameBoardViewController: UIViewController {
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupGameBoard()
-        setupNavigation()
-    }
-    
-    private func setupGameBoard() {
-        // Создаём и добавляем GameBoardView
-        let gameBoardView = GameBoardView()
-        gameBoardView.translatesAutoresizingMaskIntoConstraints = false
-        gameBoardView.backgroundColor = .white
-        
-        view.addSubview(gameBoardView)
-        
-        NSLayoutConstraint.activate([
-            gameBoardView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            gameBoardView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            gameBoardView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            gameBoardView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
-    
-    private func setupNavigation() {
-        title = "Game Board"
-        view.backgroundColor = .white
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // Показываем navigation bar
-        navigationController?.isNavigationBarHidden = false
-    }
-}
+
 
 #Preview("Main Villozi House") {
     let dataSource = CatalogOfHousesDataSourse()

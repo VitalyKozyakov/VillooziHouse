@@ -4,6 +4,10 @@
 //
 //  Created by Виталий Козьяков on 27.03.2026.
 //
+struct MainMenuItem {
+    let model: MainVilloziHouseCellModel
+    let action: () -> Void
+}
 
 enum MainVilloziHouseCellModel {
     case project
