@@ -6,17 +6,37 @@
 //
 
 import Foundation
-
 struct HouseConfiguration {
     let houseId: String // Связь с House.id
-    
-    // MARK: -
-    
-    // MARK: -
-    
-    // MARK: -
-    
-    // MARK: -
+    // MARK: - Характеристика
+    enum HouseTypefoundation: String {
+        case none = "Нет"
+        case screwPiles = "Винтовые сваи"
+        case slab = "Плита"
+        case concretePiles = "Бетонные сваи"
+    }
+    enum SipType: String {
+        case none = "Нет"
+        case skeleton45 = "Каркас 45 мм"
+        case skeleton145 = "Каркас 145 мм"
+        case skeleton195 = "Каркас 195 мм"
+        case sip121 = "Сип панели 121 мм"
+        case sip171 = "Сип панели 171 мм"
+        case sip221 = "Сип панели 221 мм"
+    }
+    struct HouseType {
+        let foundation: HouseTypefoundation // фундамент
+        let overlap: SipType //Перекрытие
+        let exteriorWalls: SipType //Внешние стены
+        let internalWalls: SipType //Внутренние стены
+        let overlapTwo: SipType //Перекрытие 2
+        let exteriorWallsTwo: SipType //Внешние стены2
+        let internalWallsTwo: SipType //Внутренние стены2
+        let overlapThree: SipType //Перекрытие 3
+        let exteriorWallsThree: SipType //Внешние стены3
+        let internalWallsThree: SipType //Внутренние стены3
+        let roofMaterial: SipType //Крыша
+    }
     
     // MARK: - 1. Комплект дома
     struct HouseKit {
@@ -34,7 +54,6 @@ struct HouseConfiguration {
             cutPanels + dryLumber + gluedBeam + fastener + powerFastener + insulationMaterials + professionalInstallation + foundationSlab
         }
     }
-    
     // MARK: - 2. Кровля (Варианты)
     struct RoofingOptions {
         let metalTile: Double          // Металлочерепица
@@ -43,13 +62,11 @@ struct HouseConfiguration {
         let corrugatedSheet: Double    // Профнастил кровельный
         let builtUpRoof: Double        // Наплавляемая кровля
     }
-    
     // MARK: - 3. На кровлю
     struct RoofAccessories {
         let ventilationElements: Double // Вентиляционные элементы Vilpe
         let gutterSystem: Double        // Водосточная система
     }
-    
     // MARK: - 4. Фасад (Варианты)
     struct FacadeOptions {
         let vinylSiding: Double         // Виниловый сайдинг
@@ -63,14 +80,12 @@ struct HouseConfiguration {
         let clinkerTile: Double         // Клинкерная плитка
         let facadeConservation: Double  // Консервация фасада
     }
-    
     // MARK: - 5. Торцы крыши
     struct GableEndOptions {
         let vinylJTrim: Double          // Виниловая J-фаска
         let wood: Double                // Дерево
         let metalLTrim: Double          // Металлическая L-планка
     }
-    
     // MARK: - 6. Свесы крыши, потолки над террасами и балконами
     struct SoffitOptions {
         let vinylSoffit: Double         // Виниловые софиты
@@ -78,13 +93,11 @@ struct HouseConfiguration {
         let fiberCementSiding: Double   // Фиброцементный сайдинг
         let metalSoffit: Double         // Металлические софиты
     }
-    
     // MARK: - 7. Окна и двери
     struct WindowsDoors {
         let aluminumDoors: Double       // Алюминиевые двери
         let metalPlasticWindows: Double // Металлопластиковые окна и двери
     }
-    
     // MARK: - 8. Балконы, террасы, лестницы
     struct Terraces {
         let terraceWaterproofing: Double // Гидроизоляция террас
@@ -94,14 +107,25 @@ struct HouseConfiguration {
         }
         let beamFinishing: BeamFinishing
     }
-    
     // MARK: - 9. Настил на террасах
     struct TerraceDeckingOptions {
         let woodenDecking: Double       // Террасная доска
         let compositeDecking: Double    // Террасная доска искусственная (ДПК)
         let sheetMaterials: Double      // Листовые материалы
     }
+    // MARK: - Отопление
     
+    struct Engineer {
+        let electricS: Double
+        let gas: Double
+        let tverd: Double
+        let teploNasos: Double
+        let radiator: Double
+        let tepliyPol: Double
+    }
+    // MARK: - 10. Инженерка
+    
+    let houseType: HouseType
     let houseKit: HouseKit
     let roofingOptions: RoofingOptions
     let roofAccessories: RoofAccessories
@@ -111,13 +135,34 @@ struct HouseConfiguration {
     let windowsDoors: WindowsDoors
     let terraces: Terraces
     let terraceDeckingOptions: TerraceDeckingOptions
+    let houseEngineer: Engineer
     
     init(houseId: String) {
         self.houseId = houseId
-        
         switch houseId {
             
         case "127-14":
+            self.houseEngineer = Engineer(
+                electricS: 123,
+                gas: 1234,
+                tverd: 12345,
+                teploNasos: 123456,
+                radiator: 1234567,
+                tepliyPol: 12345678
+            )
+            self.houseType = HouseType(
+                foundation: .screwPiles,
+                overlap: .sip171,
+                exteriorWalls: .sip171,
+                internalWalls: .sip171,
+                overlapTwo: .sip171,
+                exteriorWallsTwo: .sip171,
+                internalWallsTwo: .sip171,
+                overlapThree: .none,
+                exteriorWallsThree: .none,
+                internalWallsThree: .none,
+                roofMaterial: .sip221
+            )
             self.houseKit = HouseKit(
                 cutPanels: 399689,
                 dryLumber: 200000,
@@ -176,6 +221,27 @@ struct HouseConfiguration {
                 sheetMaterials: 141531// Листовые материалы
             )
         case "60-23":
+            self.houseEngineer = Engineer(
+                electricS: 123,
+                gas: 1234,
+                tverd: 12345,
+                teploNasos: 123456,
+                radiator: 1234567,
+                tepliyPol: 12345678
+            )
+            self.houseType = HouseType(
+                foundation: .screwPiles,
+                overlap: .sip171,
+                exteriorWalls: .sip171,
+                internalWalls: .skeleton145,
+                overlapTwo: .none,
+                exteriorWallsTwo: .none,
+                internalWallsTwo: .none,
+                overlapThree: .none,
+                exteriorWallsThree: .none,
+                internalWallsThree: .none,
+                roofMaterial: .sip171
+            )
             self.houseKit = HouseKit(
                 cutPanels: 6023,
                 dryLumber: 6023,
@@ -242,6 +308,27 @@ struct HouseConfiguration {
                 sheetMaterials: 128000
             )
         case "129-14":
+            self.houseEngineer = Engineer(
+                electricS: 123,
+                gas: 1234,
+                tverd: 12345,
+                teploNasos: 123456,
+                radiator: 1234567,
+                tepliyPol: 12345678
+            )
+            self.houseType = HouseType(
+                foundation: .screwPiles,
+                overlap: .sip171,
+                exteriorWalls: .sip171,
+                internalWalls: .skeleton145,
+                overlapTwo: .sip171,
+                exteriorWallsTwo: .sip171,
+                internalWallsTwo: .skeleton145,
+                overlapThree: .none,
+                exteriorWallsThree: .none,
+                internalWallsThree: .none,
+                roofMaterial: .sip221
+            )
             self.houseKit = HouseKit(
                 cutPanels: 918908.7,
                 dryLumber: 707180,
@@ -309,72 +396,115 @@ struct HouseConfiguration {
                 sheetMaterials: 20898
             )
         case "01-24":
+            self.houseEngineer = Engineer(
+                electricS: 123,
+                gas: 1234,
+                tverd: 12345,
+                teploNasos: 123456,
+                radiator: 1234567,
+                tepliyPol: 12345678
+            )
+            self.houseType = HouseType(
+                foundation: .screwPiles,
+                overlap: .sip171,
+                exteriorWalls: .sip171,
+                internalWalls: .skeleton145,
+                overlapTwo: .skeleton145,
+                exteriorWallsTwo: .skeleton145,
+                internalWallsTwo: .none,
+                overlapThree: .none,
+                exteriorWallsThree: .none,
+                internalWallsThree: .none,
+                roofMaterial: .sip171
+            )
             self.houseKit = HouseKit(
-                cutPanels: 0124,
-                dryLumber: 0124,
-                gluedBeam: 0124,
-                fastener: 0124,
-                powerFastener: 0124,
-                insulationMaterials: 0124,
-                professionalInstallation: 0124,
-                foundationSlab: 0124, household: 0
+                cutPanels: 760495,// Набор раскроенных панелей
+                dryLumber: 860707,// Пиломатериал сухой строганый
+                gluedBeam: 256976,// Клееный брус
+                fastener: 29565,// Крепеж (41 мм, 75 мм, 120 мм.)
+                powerFastener: 25514,// Специализированный силовой крепеж (180мм - 360мм)
+                insulationMaterials: 62893,// Материалы, улучшающие теплоизоляцию и герметичность
+                professionalInstallation: 873203,// Профессиональный монтаж
+                foundationSlab: 491651, // Монтаж фундамента - Плита
+                household: 95000//бытовка
             )
             
             self.roofingOptions = RoofingOptions(
-                metalTile: 485000,
-                bitumenShingle: 595000,
-                seamRoof: 715000,
-                corrugatedSheet: 525000,
-                builtUpRoof: 745000
+                metalTile: 700374,// Металлочерепица
+                bitumenShingle: 868499,// Битумная черепица
+                seamRoof: 1045787,// Фальцевая кровля
+                corrugatedSheet: 766093,// Профнастил кровельный
+                builtUpRoof: 1091880// Наплавляемая кровля
             )
             
             self.roofAccessories = RoofAccessories(
-                ventilationElements: 72000,
-                gutterSystem: 128000
+                ventilationElements: 79947,// Вентиляционные элементы Vilpe
+                gutterSystem: 129597// Водосточная система
             )
             
             self.facadeOptions = FacadeOptions(
-                vinylSiding: 550000,
-                vinylPanels: 625000,
-                woodImitation: 825000,
-                fiberCementSiding: 1380000,
-                hauberkBrick: 940000,
-                fold: 935000,
-                wallCorrugatedSheet: 935000,
-                metalSiding: 845000,
-                clinkerTile: 1880000,
-                facadeConservation: 85000
+                vinylSiding: 531803,// Виниловый сайдинг
+                vinylPanels: 601468,// Виниловые фасадные панели
+                woodImitation: 802459,// Деревянная отделка. Имитация бруса
+                fiberCementSiding: 1346119,// Фиброцементный сайдинг
+                hauberkBrick: 911724,// Фасад под кирпич Хауберк
+                fold: 908211,// Фальц
+                wallCorrugatedSheet: 908211,// Профнастил стеновой
+                metalSiding: 818542,// Металлический сайдинг
+                clinkerTile: 1827795,// Клинкерная плитка
+                facadeConservation: 83132// Консервация фасада
             )
             
             self.gableEndOptions = GableEndOptions(
-                vinylJTrim: 55000,
-                wood: 98000,
-                metalLTrim: 89000
+                vinylJTrim: 80900,// Виниловая J-фаска
+                wood: 145332,// Дерево
+                metalLTrim: 132132// Металлическая L-планка
             )
             
             self.soffitOptions = SoffitOptions(
-                vinylSoffit: 132000,
-                wood: 212000,
-                fiberCementSiding: 342000,
-                metalSoffit: 220000
+                vinylSoffit: 212852,// Виниловые софиты
+                wood: 341647,// Дерево
+                fiberCementSiding: 551624,// Фиброцементный сайдинг
+                metalSoffit: 354317// Металлические софиты
             )
             
             self.windowsDoors = WindowsDoors(
-                aluminumDoors: 218000,
-                metalPlasticWindows: 312000
+                aluminumDoors: 95000,// Алюминиевые двери
+                metalPlasticWindows: 529022// Металлопластиковые окна и двери
             )
             
             self.terraces = Terraces(
-                terraceWaterproofing: 225000,
-                beamFinishing: Terraces.BeamFinishing(puttyAndPaint: 48000)
+                terraceWaterproofing: 0,// Гидроизоляция террас
+                beamFinishing: Terraces.BeamFinishing(puttyAndPaint: 72486)// Шпатлевка и окрашивание
             )
             
             self.terraceDeckingOptions = TerraceDeckingOptions(
-                woodenDecking: 204000,
-                compositeDecking: 272000,
-                sheetMaterials: 142000
+                woodenDecking: 471778,// Террасная доска
+                compositeDecking: 628529,// Террасная доска искусственная (ДПК)
+                sheetMaterials: 328014// Листовые материалы
             )
-        default: 
+        default:
+            self.houseEngineer = Engineer(
+                electricS: 123,
+                gas: 1234,
+                tverd: 12345,
+                teploNasos: 123456,
+                radiator: 1234567,
+                tepliyPol: 12345678
+            )
+            self.houseType = HouseType(
+                foundation: .none,
+                overlap: .none,
+                exteriorWalls: .none,
+                internalWalls: .none,
+                overlapTwo: .none,
+                exteriorWallsTwo: .none,
+                internalWallsTwo: .none,
+                overlapThree: .none,
+                exteriorWallsThree: .none,
+                internalWallsThree: .none,
+                roofMaterial: .none
+            )
             self.houseKit = HouseKit(
                 cutPanels: 00,
                 dryLumber: 00,
@@ -443,3 +573,4 @@ struct HouseConfiguration {
         }
     }
 }
+

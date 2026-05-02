@@ -99,8 +99,8 @@ class CalculatingTheHouseCell: UITableViewCell {
     }
     
     func configure(
-        with option: CalculatingTheHouseViewController.FinishingOption,
-        selectionType: CalculatingTheHouseViewController.Category.Selection,
+        with option: OptionItem,
+        selectionType: OptionSection.Selection,
         isSelected: Bool
     ) {
         nameMaterialLabel.text = option.title
@@ -168,9 +168,6 @@ class CalculatingTheHouseCell: UITableViewCell {
         
     }
     @objc private func buttonTapped() {
-        //        isSelectedState.toggle()
-        //        setSelected(isSelectedState)
-        //        onSelect?(isSelectedState)
     }
 }
 

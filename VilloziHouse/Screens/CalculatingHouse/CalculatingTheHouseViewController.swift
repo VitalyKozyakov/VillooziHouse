@@ -8,41 +8,28 @@
 import UIKit
 
 final class CalculatingTheHouseViewController: UIViewController {
+    
+    
+    private var selectedTab: CalculatorTab {
+        CalculatorTab(rawValue: segmentControl.selectedSegmentIndex) ?? .finishing
+    }
+    
+    
+    
+    private var displayedSection: [CalculatorSection] {
+        switch selectedTab {
+        case .finishing:
+            return finishingData.map { .options($0) }
+        case .engineering:
+            return engineeringData.map { .options($0) }
+        case .characteristics:
+            return characteristicsSections.map { .characteristics($0) }
+        }
+    }
+    
     // MARK: - Models
     
-    enum DataType {
-        case finishing
-        case engineering
-        case characteristics
-    }
     
-    struct CharacteristicItem {
-        let title: String
-        let value: String
-    }
-    
-    struct CharacteristicSection {
-        let title: String
-        let options: [CharacteristicItem]
-    }
-    
-    struct Category {
-        enum Selection {
-            case single // одна
-            case multiple //несколько
-        }
-        
-        let title: String // название секции
-        let selectionType: Selection  // "single" или "multiple"
-        let options: [FinishingOption] // ячейки с названиями и ценами(два лейбла)
-    }
-    
-    struct FinishingOption {
-        let id: String // индивид. номер(порядковый)
-        let title: String // название в ячейке
-        let deltaRub: Double //стоимость в ячейке
-        let isDefaultSelected: Bool
-    }
     
     private let houseId: String
     private let configurationService: CatalogExteriorDecorationDataSourse
@@ -51,60 +38,15 @@ final class CalculatingTheHouseViewController: UIViewController {
     private let houseImages: [UIImage]
     private var currentImageIndex: Int = 0
     
+    private let builder = HouseCalculatorSectionsBuilder()
     
     
     // MARK: - Data
     
-    private var characteristicsSections: [CharacteristicSection] {
-        return [
-            CharacteristicSection(
-                title: "1 этаж",
-                options: [
-                    CharacteristicItem(title: "Высота стен", value: "2,8м"),
-                    CharacteristicItem(title: "Перекрытие этажа", value: "СИП-ОСП 171мм"),
-                    CharacteristicItem(title: "Внешние стены", value: "СИП-ОСП 171мм"),
-                    CharacteristicItem(title: "Внутренние перегородки", value: "Каркас 145мм")
-                ]
-            ),
-            CharacteristicSection(
-                title: "2 этаж",
-                options: [
-                    CharacteristicItem(title: "Перекрытие этажа", value: "СИП-ОСП 171мм")
-                ]
-            ),
-            CharacteristicSection(
-                title: "Мансарда",
-                options: [
-                    CharacteristicItem(title: "Высота стен", value: "2,5м-2,8м"),
-                    CharacteristicItem(title: "Внешние стены", value: "СИП-ОСП 171мм"),
-                    CharacteristicItem(title: "Внутренние перегородки", value: "Каркас 145мм")
-                ]
-            ),
-            CharacteristicSection(
-                title: "Крыша",
-                options: [
-                    CharacteristicItem(title: "Крыша", value: "СИП-ОСП 221мм")
-                ]
-            )
-        ]
-    }
+    private var characteristicsSections: [CharacteristicSection] = []
+    var finishingData: [OptionSection] = []
     
-    var finishingData: [Category] {
-        return [
-            createHouseKitCategory(),
-            createRoofingCategory(),
-            createRoofAccessoriesCategory(),
-            createFacadeCategory(),
-            createGableEndCategory(),
-            createSoffitCategory(),
-            createWindowsDoorsCategory(),
-            createTerracesCategory(),
-            createBeamFinishingCategory(),
-            createTerraceDeckingCategory()
-        ]
-    }
-    
-    private func createHouseKitCategory() -> Category {
+    private func createHouseKitCategory() -> OptionSection {
         let kit = houseConfiguration?.houseKit ?? HouseConfiguration.HouseKit(
             cutPanels: 0,//Обрезные панели
             dryLumber: 0,//пиломатериалы
@@ -117,54 +59,54 @@ final class CalculatingTheHouseViewController: UIViewController {
             household: 0 //бытовка
         )
         
-        return Category(
+        return OptionSection(
             title: "Комплект дома",
             selectionType: .multiple,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "kit_1",
                     title: "Набор раскроенных панелей",
                     deltaRub: kit.cutPanels,
                     isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_2",
                     title: "Пиломатериал сухой строганый",
                     deltaRub: kit.dryLumber,
                     isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_3",
                     title: "Клееный брус",
                     deltaRub: kit.gluedBeam,
                     isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_4",
                     title: "Крепеж (41 мм, 75 мм, 120 мм.)",
                     deltaRub: kit.fastener, isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_5",
                     title: "Специализированный силовой крепеж (180мм - 360мм)",
                     deltaRub: kit.powerFastener, isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_6",
                     title: "Материалы, улучшающие теплоизоляцию и герметичность дома:",
                     deltaRub: kit.insulationMaterials, isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_7",
                     title: "Профессиональный монтаж:",
                     deltaRub: kit.professionalInstallation, isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_8",
                     title: "Монтаж фундамента-железобетонные сваи:",
                     deltaRub: kit.foundationSlab, isDefaultSelected: true
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "kit_9",
                     title: "Бытовка, снегозадержетели, доставка, биотуалет, укрывные тенты, подкладные доски, временная лестница:",
                     deltaRub: kit.foundationSlab, isDefaultSelected: true
@@ -172,7 +114,7 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createRoofingCategory() -> Category {
+    private func createRoofingCategory() -> OptionSection {
         let roofing = houseConfiguration?.roofingOptions ?? HouseConfiguration.RoofingOptions(
             metalTile: 0,
             bitumenShingle: 0,
@@ -181,27 +123,27 @@ final class CalculatingTheHouseViewController: UIViewController {
             builtUpRoof: 0
         )
         
-        return Category(
+        return OptionSection(
             title: "Кровля",
             selectionType: .single,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "roof_1",
                     title: "Металлочерепица",
                     deltaRub: roofing.metalTile, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "roof_2",
                     title: "Фальцевая кровля",
                     deltaRub: roofing.bitumenShingle, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "roof_3",
                     title: "Наплавляемая кровля",
                     deltaRub: roofing.seamRoof, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "roof_4",
                     title: "Битумная черепица",
                     deltaRub: roofing.corrugatedSheet, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "roof_5",
                     title: "Профнастил кровельный",
                     deltaRub: roofing.builtUpRoof, isDefaultSelected: false
@@ -209,21 +151,21 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createRoofAccessoriesCategory() -> Category {
+    private func createRoofAccessoriesCategory() -> OptionSection {
         let accessories = houseConfiguration?.roofAccessories ?? HouseConfiguration.RoofAccessories(
             ventilationElements: 0,
             gutterSystem: 0
         )
         
-        return Category(
+        return OptionSection(
             title: "На кровлю",
             selectionType: .multiple,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "1",
                     title: "Вентиляционные элементы Vilpe. Количество по проекту",
                     deltaRub: accessories.ventilationElements, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "2",
                     title: "Водосточная система",
                     deltaRub: accessories.gutterSystem, isDefaultSelected: false
@@ -231,7 +173,7 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createFacadeCategory() -> Category {
+    private func createFacadeCategory() -> OptionSection {
         let facade = houseConfiguration?.facadeOptions ?? HouseConfiguration.FacadeOptions(
             vinylSiding: 0,
             vinylPanels: 0,
@@ -245,51 +187,51 @@ final class CalculatingTheHouseViewController: UIViewController {
             facadeConservation: 0
         )
         
-        return Category(
+        return OptionSection(
             title: "Фасад",
             selectionType: .single,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "1",
                     title: "Виниловый сайдинг",
                     deltaRub: facade.vinylSiding, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "2",
                     title: "Деревянная отделка. Имитация бруса",
                     deltaRub: facade.woodImitation, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "3",
                     title: "Фасад под кирпич Хауберк",
                     deltaRub: facade.hauberkBrick, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "4",
                     title: "Профнастил стеновой",
                     deltaRub: facade.wallCorrugatedSheet, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "5",
                     title: "Клинкерная плитка",
                     deltaRub: facade.clinkerTile, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "6",
                     title: "Виниловые фасадные панели",
                     deltaRub: facade.vinylPanels, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "7",
                     title: "Фиброцементный сайдинг",
                     deltaRub: facade.fiberCementSiding, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "8",
                     title: "Фальц",
                     deltaRub: facade.fold, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "9",
                     title: "Металлический сайдинг",
                     deltaRub: facade.metalSiding, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "10",
                     title: "Клинкерная плитка",
                     deltaRub: facade.clinkerTile, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "11",
                     title: "Консервация фасада",
                     deltaRub: facade.facadeConservation, isDefaultSelected: false
@@ -297,26 +239,26 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createGableEndCategory() -> Category {
+    private func createGableEndCategory() -> OptionSection {
         let gable = houseConfiguration?.gableEndOptions ?? HouseConfiguration.GableEndOptions(
             vinylJTrim: 0,
             wood: 0,
             metalLTrim: 0
         )
         
-        return Category(
+        return OptionSection(
             title: "Торцы крыши",
             selectionType: .single,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "1",
                     title: "Виниловая J-фаска",
                     deltaRub: gable.vinylJTrim, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "2",
                     title: "Металлическая L-планка",
                     deltaRub: gable.metalLTrim, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "3",
                     title: "Дерево",
                     deltaRub: gable.wood, isDefaultSelected: false
@@ -324,7 +266,7 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createSoffitCategory() -> Category {
+    private func createSoffitCategory() -> OptionSection {
         let soffit = houseConfiguration?.soffitOptions ?? HouseConfiguration.SoffitOptions(
             vinylSoffit: 0,
             wood: 0,
@@ -332,23 +274,23 @@ final class CalculatingTheHouseViewController: UIViewController {
             metalSoffit: 0
         )
         
-        return Category(
+        return OptionSection(
             title: "Свесы крыши, потолки над террасами и балконами",
             selectionType: .single,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "1",
                     title: "Виниловые софиты",
                     deltaRub: soffit.vinylSoffit, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "2",
                     title: "Фиброцементный сайдинг",
                     deltaRub: soffit.fiberCementSiding, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "3",
                     title: "Дерево",
                     deltaRub: soffit.wood, isDefaultSelected: false
-                ),FinishingOption(
+                ),OptionItem(
                     id: "4",
                     title: "Металлические софиты",
                     deltaRub: soffit.metalSoffit, isDefaultSelected: false
@@ -356,23 +298,23 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createWindowsDoorsCategory() -> Category {
+    private func createWindowsDoorsCategory() -> OptionSection {
         let windowsDoors = houseConfiguration?.windowsDoors ?? HouseConfiguration.WindowsDoors(
             aluminumDoors: 0,
             metalPlasticWindows: 0
         )
         
-        return Category(
+        return OptionSection(
             title: "Окна и двери",
             selectionType: .multiple,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "windows_1",
                     title: "Алюминиевые двери",
                     deltaRub: windowsDoors.aluminumDoors,
                     isDefaultSelected: false
                 ),
-                FinishingOption(
+                OptionItem(
                     id: "windows_2",
                     title: "Металлопластиковые окна и двери",
                     deltaRub: windowsDoors.metalPlasticWindows,
@@ -381,17 +323,17 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createTerracesCategory() -> Category {
+    private func createTerracesCategory() -> OptionSection {
         let terraces = houseConfiguration?.terraces ?? HouseConfiguration.Terraces(
             terraceWaterproofing: 0,
             beamFinishing: HouseConfiguration.Terraces.BeamFinishing(puttyAndPaint: 0)
         )
         
-        return Category(
+        return OptionSection(
             title: "Балконы, террасы, лестницы",
             selectionType: .single,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "1",
                     title: "Деревянные горизонтальные типовые",
                     deltaRub: terraces.terraceWaterproofing, isDefaultSelected: false
@@ -399,14 +341,14 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createBeamFinishingCategory() -> Category {
+    private func createBeamFinishingCategory() -> OptionSection {
         let beamFinishing = houseConfiguration?.terraces.beamFinishing ?? HouseConfiguration.Terraces.BeamFinishing(puttyAndPaint: 0)
         
-        return Category(
+        return OptionSection(
             title: "Отделка балок и стоек на террасе и балконе",
             selectionType: .single,
             options: [
-                FinishingOption(
+                OptionItem(
                     id: "1",
                     title: "Шпатлевка и окрашивание",
                     deltaRub: beamFinishing.puttyAndPaint, isDefaultSelected: false
@@ -414,21 +356,21 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
-    private func createTerraceDeckingCategory() -> Category {
+    private func createTerraceDeckingCategory() -> OptionSection {
         let decking = houseConfiguration?.terraceDeckingOptions ?? HouseConfiguration.TerraceDeckingOptions(
             woodenDecking: 0,
             compositeDecking: 0,
             sheetMaterials: 0
         )
         
-        return Category(
+        return OptionSection(
             title: "Настил на террасах",
             selectionType: .single,
-            options: [FinishingOption(id: "1", title: "Террасная доска", deltaRub: decking.woodenDecking, isDefaultSelected: false),FinishingOption(
+            options: [OptionItem(id: "1", title: "Террасная доска", deltaRub: decking.woodenDecking, isDefaultSelected: false),OptionItem(
                 id: "1",
                 title: "Листовые материалы",
                 deltaRub: decking.sheetMaterials, isDefaultSelected: false
-            ),FinishingOption(
+            ),OptionItem(
                 id: "1",
                 title: "Террасная доска искусственная (ДПК)",
                 deltaRub: decking.compositeDecking, isDefaultSelected: false
@@ -436,95 +378,161 @@ final class CalculatingTheHouseViewController: UIViewController {
             ]
         )
     }
+    private func createHotWaterCategory() -> EngineeringSection {
+        let enginiring = houseConfiguration?.houseEngineer ?? HouseConfiguration.Engineer(
+            electricS: 0,
+            gas: 0,
+            tverd: 0,
+            teploNasos: 0,
+            radiator: 0,
+            tepliyPol: 0
+        )
+    return EngineeringSection(title: "Отопление", options: [EngineeringItem(id: "11", title: "Электирка котеллл",
+                deltaRub: enginiring.electricS, isDefaultSelected: false),
+           EngineeringItem(id: "h2", title: "Газовый котел",deltaRub: 2,isDefaultSelected: false),
+           EngineeringItem(id: "h3",title: "Твердотопливный котел",deltaRub: 3,isDefaultSelected: false),
+                      EngineeringItem(
+                        id: "h4",
+                        title: "Тепловой насос",
+                        deltaRub: 4,
+                        isDefaultSelected: false
+                      ),
+                      EngineeringItem(
+                        id: "h5",
+                        title: "Радиаторы отопления",
+                        deltaRub: 5,
+                        isDefaultSelected: false
+                      ),
+                      EngineeringItem(
+                        id: "h6",
+                        title: "Теплый пол водяной",
+                        deltaRub: 6,
+                        isDefaultSelected: false
+                      )]
+        )
+            
+    }
+
     
-    let engineeringData: [Category] = [
-        Category(
-            title: "Отопление",
-            selectionType: .single,
-            options: [
-                FinishingOption(
-                    id: "h1",
-                    title: "Электрический котел",
-                    deltaRub: 85000,
-                    isDefaultSelected: false
-                ),
-                FinishingOption(id: "h2", title: "Газовый котел", deltaRub: 120000, isDefaultSelected: false),
-                FinishingOption(id: "h3", title: "Твердотопливный котел", deltaRub: 95000, isDefaultSelected: false),
-                FinishingOption(id: "h4", title: "Тепловой насос", deltaRub: 350000, isDefaultSelected: false),
-                FinishingOption(id: "h5", title: "Радиаторы отопления", deltaRub: 89000, isDefaultSelected: false),
-                FinishingOption(id: "h6", title: "Теплый пол водяной", deltaRub: 145000, isDefaultSelected: false)
-            ]
-        ),
-        Category(
+    var engineeringData: [OptionSection] = [
+//        OptionSection(
+//            title: "Отопление",
+//            selectionType: .single,
+//            options: [
+//                OptionItem(
+//                    id: "h1",
+//                    title: "Электрический котел",
+//                    deltaRub: 85000,
+//                    isDefaultSelected: false
+//                ),
+//                OptionItem(id: "h2", title: "Газовый котел", deltaRub: 120000, isDefaultSelected: false),
+//                OptionItem(id: "h3", title: "Твердотопливный котел", deltaRub: 95000, isDefaultSelected: false),
+//                OptionItem(id: "h4", title: "Тепловой насос", deltaRub: 350000, isDefaultSelected: false),
+//                OptionItem(id: "h5", title: "Радиаторы отопления", deltaRub: 89000, isDefaultSelected: false),
+//                OptionItem(id: "h6", title: "Теплый пол водяной", deltaRub: 145000, isDefaultSelected: false)
+//            ]
+//        ),
+        OptionSection(
             title: "Водоснабжение",
             selectionType: .multiple,
             options: [
-                FinishingOption(id: "w1", title: "Скважина", deltaRub: 120000, isDefaultSelected: false),
-                FinishingOption(id: "w2", title: "Насосная станция", deltaRub: 45000, isDefaultSelected: false),
-                FinishingOption(id: "w3", title: "Фильтрация воды", deltaRub: 35000, isDefaultSelected: false),
-                FinishingOption(id: "w4", title: "Водонагреватель", deltaRub: 55000, isDefaultSelected: false),
-                FinishingOption(id: "w5", title: "Трубы ХВС", deltaRub: 67000, isDefaultSelected: false),
-                FinishingOption(id: "w6", title: "Трубы ГВС", deltaRub: 67000, isDefaultSelected: false),
-                FinishingOption(id: "w7", title: "Коллектор водоснабжения", deltaRub: 28000, isDefaultSelected: false)
+                OptionItem(id: "w1", title: "Скважина", deltaRub: 120000, isDefaultSelected: false),
+                OptionItem(id: "w2", title: "Насосная станция", deltaRub: 45000, isDefaultSelected: false),
+                OptionItem(id: "w3", title: "Фильтрация воды", deltaRub: 35000, isDefaultSelected: false),
+                OptionItem(id: "w4", title: "Водонагреватель", deltaRub: 55000, isDefaultSelected: false),
+                OptionItem(id: "w5", title: "Трубы ХВС", deltaRub: 67000, isDefaultSelected: false),
+                OptionItem(id: "w6", title: "Трубы ГВС", deltaRub: 67000, isDefaultSelected: false),
+                OptionItem(id: "w7", title: "Коллектор водоснабжения", deltaRub: 28000, isDefaultSelected: false)
             ]
         ),
-        Category(
+        OptionSection(
             title: "Канализация",
             selectionType: .multiple,
             options: [
-                FinishingOption(id: "s1", title: "Септик", deltaRub: 95000, isDefaultSelected: false),
-                FinishingOption(id: "s2", title: "Трубы канализации", deltaRub: 45000, isDefaultSelected: false),
-                FinishingOption(id: "s3", title: "Ливневая канализация", deltaRub: 67000, isDefaultSelected: false),
-                FinishingOption(id: "s4", title: "Дренажная система", deltaRub: 89000, isDefaultSelected: false)
+                OptionItem(id: "s1", title: "Септик", deltaRub: 95000, isDefaultSelected: false),
+                OptionItem(id: "s2", title: "Трубы канализации", deltaRub: 45000, isDefaultSelected: false),
+                OptionItem(id: "s3", title: "Ливневая канализация", deltaRub: 67000, isDefaultSelected: false),
+                OptionItem(id: "s4", title: "Дренажная система", deltaRub: 89000, isDefaultSelected: false)
             ]
         ),
-        Category(
+        OptionSection(
             title: "Электрика",
             selectionType: .multiple,
             options: [
-                FinishingOption(id: "e1", title: "Вводной щиток", deltaRub: 35000, isDefaultSelected: false),
-                FinishingOption(id: "e2", title: "Кабель силовой", deltaRub: 89000, isDefaultSelected: false),
-                FinishingOption(id: "e3", title: "Розетки и выключатели", deltaRub: 45000, isDefaultSelected: false),
-                FinishingOption(id: "e4", title: "Освещение", deltaRub: 67000, isDefaultSelected: false),
-                FinishingOption(id: "e5", title: "Заземление и молниезащита", deltaRub: 55000, isDefaultSelected: false),
-                FinishingOption(id: "e6", title: "Автоматы и УЗО", deltaRub: 28000, isDefaultSelected: false)
+                OptionItem(id: "e1", title: "Вводной щиток", deltaRub: 35000, isDefaultSelected: false),
+                OptionItem(id: "e2", title: "Кабель силовой", deltaRub: 89000, isDefaultSelected: false),
+                OptionItem(id: "e3", title: "Розетки и выключатели", deltaRub: 45000, isDefaultSelected: false),
+                OptionItem(id: "e4", title: "Освещение", deltaRub: 67000, isDefaultSelected: false),
+                OptionItem(id: "e5", title: "Заземление и молниезащита", deltaRub: 55000, isDefaultSelected: false),
+                OptionItem(id: "e6", title: "Автоматы и УЗО", deltaRub: 28000, isDefaultSelected: false)
             ]
         ),
-        Category(
+        OptionSection(
             title: "Вентиляция",
             selectionType: .single,
             options: [
-                FinishingOption(id: "v1", title: "Естественная вентиляция", deltaRub: 35000, isDefaultSelected: false),
-                FinishingOption(id: "v2", title: "Приточная вентиляция", deltaRub: 89000, isDefaultSelected: false),
-                FinishingOption(id: "v3", title: "Приточно-вытяжная с рекуперацией", deltaRub: 245000, isDefaultSelected: false),
-                FinishingOption(id: "v4", title: "Воздуховоды", deltaRub: 67000, isDefaultSelected: false)
+                OptionItem(id: "v1", title: "Естественная вентиляция", deltaRub: 35000, isDefaultSelected: false),
+                OptionItem(id: "v2", title: "Приточная вентиляция", deltaRub: 89000, isDefaultSelected: false),
+                OptionItem(id: "v3", title: "Приточно-вытяжная с рекуперацией", deltaRub: 245000, isDefaultSelected: false),
+                OptionItem(id: "v4", title: "Воздуховоды", deltaRub: 67000, isDefaultSelected: false)
             ]
         ),
-        Category(
+        OptionSection(
             title: "Кондиционирование",
             selectionType: .multiple,
             options: [
-                FinishingOption(id: "c1", title: "Сплит-система", deltaRub: 75000, isDefaultSelected: false),
-                FinishingOption(id: "c2", title: "Мульти-сплит система", deltaRub: 185000, isDefaultSelected: false),
-                FinishingOption(id: "c3", title: "Фреонопроводы", deltaRub: 35000, isDefaultSelected: false)
+                OptionItem(id: "c1", title: "Сплит-система", deltaRub: 75000, isDefaultSelected: false),
+                OptionItem(id: "c2", title: "Мульти-сплит система", deltaRub: 185000, isDefaultSelected: false),
+                OptionItem(id: "c3", title: "Фреонопроводы", deltaRub: 35000, isDefaultSelected: false)
             ]
         ),
-        Category(
+        OptionSection(
             title: "Слаботочные системы",
             selectionType: .multiple,
             options: [
-                FinishingOption(id: "l1", title: "Интернет и телефония", deltaRub: 25000, isDefaultSelected: false),
-                FinishingOption(id: "l2", title: "Телевидение", deltaRub: 15000, isDefaultSelected: false),
-                FinishingOption(id: "l3", title: "Домофон", deltaRub: 18000, isDefaultSelected: false),
-                FinishingOption(id: "l4", title: "Видеонаблюдение", deltaRub: 65000, isDefaultSelected: false),
-                FinishingOption(id: "l5", title: "Охранная сигнализация", deltaRub: 55000, isDefaultSelected: false)
+                OptionItem(id: "l1", title: "Интернет и телефония", deltaRub: 25000, isDefaultSelected: false),
+                OptionItem(id: "l2", title: "Телевидение", deltaRub: 15000, isDefaultSelected: false),
+                OptionItem(id: "l3", title: "Домофон", deltaRub: 18000, isDefaultSelected: false),
+                OptionItem(id: "l4", title: "Видеонаблюдение", deltaRub: 65000, isDefaultSelected: false),
+                OptionItem(id: "l5", title: "Охранная сигнализация", deltaRub: 55000, isDefaultSelected: false)
             ]
         )
     ]
+    private func createHouseCharacteristics() -> CharacteristicSection {
+        let houseType = houseConfiguration?.houseType ?? HouseConfiguration.HouseType (
+            foundation: .concretePiles,
+            overlap: .none,
+            exteriorWalls: .none,
+            internalWalls: .none,
+            overlapTwo: .none,
+            exteriorWallsTwo: .none,
+            internalWallsTwo: .none,
+            overlapThree: .none,
+            exteriorWallsThree: .none,
+            internalWallsThree: .none,
+            roofMaterial: .none
+        )
+        return CharacteristicSection(
+            title: "Основные характеристики дома",
+            options: [
+                CharacteristicItem(title: "Фундамент", value: houseType.foundation.rawValue),
+                CharacteristicItem(title: "Перекрытие 1 этажа", value: houseType.overlap.rawValue),
+                CharacteristicItem(title: "Стены 1 этажа", value: houseType.exteriorWalls.rawValue),
+                CharacteristicItem(title: "Перегородки внутренние", value: houseType.internalWalls.rawValue),
+                CharacteristicItem(title: "Перекрытие 2 этажа", value: houseType.overlapTwo.rawValue),
+                CharacteristicItem(title: "Стены 2 этажа", value: houseType.exteriorWallsTwo.rawValue),
+                CharacteristicItem(title: "Перегородки 2 этажа", value: houseType.internalWallsTwo.rawValue),
+                CharacteristicItem(title: "Перекрытие 3 этажа", value: houseType.overlapThree.rawValue),
+                CharacteristicItem(title: "Стены 3 этажа", value: houseType.exteriorWallsThree.rawValue),
+                CharacteristicItem(title: "Перекрытие 3 этажа", value: houseType.internalWallsThree.rawValue),
+                CharacteristicItem(title: "Крыша", value: houseType.roofMaterial.rawValue),
+            ]
+        )
+    }
     
     // MARK: - Private properties
     
-    var currentData: [Category] {
+    var currentData: [OptionSection] {
         switch segmentControl.selectedSegmentIndex {
             case 0:
             return finishingData
@@ -637,7 +645,7 @@ final class CalculatingTheHouseViewController: UIViewController {
         super.viewDidLoad()
         
         let titleLabel = UILabel()
-        titleLabel.text = "Расчет стоимости дома VilloziHouse"
+        titleLabel.text = "Расчет стоимости дома"
         titleLabel.numberOfLines = 0
         titleLabel.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         titleLabel.textAlignment = .center
@@ -654,7 +662,11 @@ final class CalculatingTheHouseViewController: UIViewController {
         
         houseConfiguration = configurationService.getConfiguration(for: houseId)
         
-//        currentData = finishingData
+        let sections = builder.build(from: houseConfiguration)
+        finishingData = sections.finishing
+        engineeringData = sections.engineering
+        characteristicsSections = sections.characteristics
+
         
         finishingSelectedSingleRow = Array(repeating: nil, count: finishingData.count)
         finishingSelectedMultipleRows = Array(repeating: [], count: finishingData.count)
@@ -668,10 +680,6 @@ final class CalculatingTheHouseViewController: UIViewController {
         setupUI()
         updateTotalPriceLabel()
         setupTableHeader()
-        
-        if segmentControl.selectedSegmentIndex == 2 {
-            tableView.reloadData()
-        }
     }
     
     // MARK: - Configure UI
@@ -687,7 +695,7 @@ final class CalculatingTheHouseViewController: UIViewController {
         } else if let selectedHouseImage {
             images = [selectedHouseImage]
         } else {
-            images = [UIImage(systemName: "project127-14-02") ?? UIImage()]
+            images = [UIImage(systemName: "127-14-1") ?? UIImage()]
         }
         
         header.configure(images: images)
@@ -801,7 +809,7 @@ final class CalculatingTheHouseViewController: UIViewController {
     }
     
     private func calculateSum(
-        for data: [Category],
+        for data: [OptionSection],
         selectedSingleRow: [Int?],
         selectedMultipleRows: [Set<Int>]
     ) -> Double {
@@ -883,17 +891,7 @@ final class CalculatingTheHouseViewController: UIViewController {
         
         return formatter.string(from: NSNumber(value: price)) ?? "\(price)"
     }
-    
-//    @objc func segmentChanged() {
-//        UIView.transition(with: tableView, duration: 0.3, options: .transitionCrossDissolve, animations: {
-//            if self.segmentControl.selectedSegmentIndex == 0 {
-//                self.currentData = self.finishingData
-//            } else {
-//                self.currentData = self.engineeringData
-//            }
-//            self.tableView.reloadData()
-//        }, completion: nil)
-//    }
+
     @objc func segmentChanged() {
         UIView.transition(with: tableView, duration: 0.3, options: .transitionCrossDissolve, animations: {
             self.tableView.reloadData()
@@ -905,158 +903,141 @@ final class CalculatingTheHouseViewController: UIViewController {
 
 extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        if isCharacteristicsTab {
-                    return characteristicsSections.count
-                }
-                return currentData.count
-            }
+        displayedSection.count
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isCharacteristicsTab {
-                    return characteristicsSections[section].options.count
-                }
-                return currentData[section].options.count
-            }
+        switch displayedSection[section] {
+        case let .characteristics(section):
+            return section.options.count
+        case let .options(section):
+            return section.options.count
+        }
+    }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if isCharacteristicsTab {
-                    return characteristicsSections[section].title
-                }
-                return currentData[section].title
-            }
+        switch displayedSection[section] {
+        case let .characteristics(section):
+            return section.title
+        case let .options(section):
+            return section.title
+        }
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if isCharacteristicsTab {
-                    let cell = tableView.dequeueReusableCell(
-                        withIdentifier: "CharacteristicCell",
-                        for: indexPath
-                    )
-                    
-                    let item = characteristicsSections[indexPath.section].options[indexPath.row]
-                    
-                    // Настройка ячейки с двумя лейблами (слева - параметр, справа - значение)
-                    var config = cell.defaultContentConfiguration()
-                    config.text = item.title
-                    config.secondaryText = item.value
-                    config.textProperties.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-                    config.secondaryTextProperties.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-                    config.secondaryTextProperties.color = .systemGray
-                    config.textProperties.color = .label
-                    
-                    cell.contentConfiguration = config
-                    cell.selectionStyle = .none // без выделения
-                    cell.backgroundColor = .white
-                    
-                    return cell
+        switch displayedSection[indexPath.section] {
+        case .options(let section):
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: CalculatingTheHouseCell.identifier,
+                for: indexPath
+            ) as? CalculatingTheHouseCell else {
+                return UITableViewCell()
+            }
+            
+            
+            let option = section.options[indexPath.row]
+            let selectionType = section.selectionType
+            
+            let isSelected: Bool
+            
+            if segmentControl.selectedSegmentIndex == 0 {
+                switch selectionType {
+                case .single:
+                    isSelected = (finishingSelectedSingleRow[indexPath.section] == indexPath.row)
+                case .multiple:
+                    isSelected = finishingSelectedMultipleRows[indexPath.section].contains(indexPath.row)
                 }
-        
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: CalculatingTheHouseCell.identifier,
-            for: indexPath
-        ) as? CalculatingTheHouseCell else {
-            return UITableViewCell()
-        }
-        
-//        let house = currentData[indexPath.section].options[indexPath.row]
-//        let house = filteredSections[indexPath.section].house[indexPath.row]
-//        cell.configureImagePage(images: [])
-        
-//        if house.imageGallery.isEmpty,
-//            let image = house.imageProject {
-//            if let uiImage = UIImage(named: image) {
-//                cell.configureImagePage(images: [uiImage])
-//            } else {
-//                cell.configureImagePage(images: [UIImage(systemName: "house.fill") ?? UIImage()])
-//            }
-//            
-//        } else {
-//            let uiImages = house.imageGallery.compactMap { UIImage(named: $0) }
-//            cell.configureImagePage(images: uiImages)
-//        }
-
-//        cell.delegate = self
-//        return cell
-    
-        
-        
-        let option = currentData[indexPath.section].options[indexPath.row]
-        let selectionType = currentData[indexPath.section].selectionType
-        
-        let isSelected: Bool
-        
-        if segmentControl.selectedSegmentIndex == 0 {
-            switch selectionType {
-            case .single:
-                isSelected = (finishingSelectedSingleRow[indexPath.section] == indexPath.row)
-            case .multiple:
-                isSelected = finishingSelectedMultipleRows[indexPath.section].contains(indexPath.row)
+            } else {
+                switch selectionType {
+                case .single:
+                    isSelected = (engineeringSelectedSingleRow[indexPath.section] == indexPath.row)
+                case .multiple:
+                    isSelected = engineeringSelectedMultipleRows[indexPath.section].contains(indexPath.row)
+                }
             }
-        } else {
-            switch selectionType {
-            case .single:
-                isSelected = (engineeringSelectedSingleRow[indexPath.section] == indexPath.row)
-            case .multiple:
-                isSelected = engineeringSelectedMultipleRows[indexPath.section].contains(indexPath.row)
-            }
+            
+            cell.configure(with: option, selectionType: selectionType, isSelected: isSelected)
+            return cell
+        case .characteristics(let characteristic):
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: "CharacteristicCell",
+                for: indexPath
+            )
+            
+            let item = characteristic.options[indexPath.row]
+            
+            // Настройка ячейки с двумя лейблами (слева - параметр, справа - значение)
+            var config = cell.defaultContentConfiguration()
+            config.text = item.title
+            config.secondaryText = item.value
+            config.textProperties.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            config.secondaryTextProperties.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+            config.secondaryTextProperties.color = .systemGray
+            config.textProperties.color = .label
+            
+            cell.contentConfiguration = config
+            cell.selectionStyle = .none // без выделения
+            cell.backgroundColor = .white
+            
+            return cell
+            
         }
-        
-        cell.configure(with: option, selectionType: selectionType, isSelected: isSelected)
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if isCharacteristicsTab {
-                    tableView.deselectRow(at: indexPath, animated: true)
-                    return
+        switch displayedSection[indexPath.section] {
+        case .characteristics:
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        case .options(let section):
+            let selectionType = section.selectionType
+            let isFinishing = selectedTab == .finishing
+            
+            
+            
+            switch selectionType {
+            case .single:
+                if isFinishing {
+                    let prev = finishingSelectedSingleRow[indexPath.section]
+                    finishingSelectedSingleRow[indexPath.section] = indexPath.row
+                    
+                    var toReload = [indexPath]
+                    if let prev, prev != indexPath.row {
+                        toReload.append(IndexPath(row: prev, section: indexPath.section))
+                    }
+                    tableView.reloadRows(at: toReload, with: .none)
+                } else {
+                    let prev = engineeringSelectedSingleRow[indexPath.section]
+                    engineeringSelectedSingleRow[indexPath.section] = indexPath.row
+                    
+                    var toReload = [indexPath]
+                    if let prev, prev != indexPath.row {
+                        toReload.append(IndexPath(row: prev, section: indexPath.section))
+                    }
+                    tableView.reloadRows(at: toReload, with: .none)
                 }
-        
-        let selectionType = currentData[indexPath.section].selectionType
-        let isFinishing = segmentControl.selectedSegmentIndex == 0
-        
-        switch selectionType {
-        case .single:
-            if isFinishing {
-                let prev = finishingSelectedSingleRow[indexPath.section]
-                finishingSelectedSingleRow[indexPath.section] = indexPath.row
                 
-                var toReload = [indexPath]
-                if let prev, prev != indexPath.row {
-                    toReload.append(IndexPath(row: prev, section: indexPath.section))
+            case .multiple:
+                if isFinishing {
+                    if finishingSelectedMultipleRows[indexPath.section].contains(indexPath.row) {
+                        finishingSelectedMultipleRows[indexPath.section].remove(indexPath.row)
+                    } else {
+                        finishingSelectedMultipleRows[indexPath.section].insert(indexPath.row)
+                    }
+                    tableView.reloadRows(at: [indexPath], with: .none)
+                } else {
+                    if engineeringSelectedMultipleRows[indexPath.section].contains(indexPath.row) {
+                        engineeringSelectedMultipleRows[indexPath.section].remove(indexPath.row)
+                    } else {
+                        engineeringSelectedMultipleRows[indexPath.section].insert(indexPath.row)
+                    }
+                    tableView.reloadRows(at: [indexPath], with: .none)
                 }
-                tableView.reloadRows(at: toReload, with: .none)
-            } else {
-                let prev = engineeringSelectedSingleRow[indexPath.section]
-                engineeringSelectedSingleRow[indexPath.section] = indexPath.row
-                
-                var toReload = [indexPath]
-                if let prev, prev != indexPath.row {
-                    toReload.append(IndexPath(row: prev, section: indexPath.section))
-                }
-                tableView.reloadRows(at: toReload, with: .none)
             }
             
-        case .multiple:
-            if isFinishing {
-                if finishingSelectedMultipleRows[indexPath.section].contains(indexPath.row) {
-                    finishingSelectedMultipleRows[indexPath.section].remove(indexPath.row)
-                } else {
-                    finishingSelectedMultipleRows[indexPath.section].insert(indexPath.row)
-                }
-                tableView.reloadRows(at: [indexPath], with: .none)
-            } else {
-                if engineeringSelectedMultipleRows[indexPath.section].contains(indexPath.row) {
-                    engineeringSelectedMultipleRows[indexPath.section].remove(indexPath.row)
-                } else {
-                    engineeringSelectedMultipleRows[indexPath.section].insert(indexPath.row)
-                }
-                tableView.reloadRows(at: [indexPath], with: .none)
-            }
+            updateTotalPriceLabel()
+            tableView.deselectRow(at: indexPath, animated: true)
         }
-        
-        updateTotalPriceLabel()
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
@@ -1064,7 +1045,7 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
 
 #Preview {
     let navigationController = UINavigationController(
-        rootViewController: CalculatingTheHouseViewController(houseId: "127-14-01")
+        rootViewController: CalculatingTheHouseViewController(houseId: "127-14-2")
     )
     return navigationController
 }
