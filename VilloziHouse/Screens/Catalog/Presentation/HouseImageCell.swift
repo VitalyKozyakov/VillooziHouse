@@ -24,6 +24,7 @@ final class HouseImageCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 16
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -47,11 +48,11 @@ final class HouseImageCell: UICollectionViewCell {
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         houseImageView.addGestureRecognizer(tapGesture)
-            }
-            
-            @objc private func imageTapped() {
-                delegate?.didTapImage(at: currentIndex)
-                    }
+    }
+    
+    @objc private func imageTapped() {
+        delegate?.didTapImage(at: currentIndex)
+    }
     // Сюда мы отправляем картинку houseImageView
     func configure(with image: UIImage?) {
         houseImageView.image = image

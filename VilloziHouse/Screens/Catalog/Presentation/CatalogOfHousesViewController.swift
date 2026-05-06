@@ -213,6 +213,8 @@ extension CatalogOfHousesViewController: UITableViewDataSource, UITableViewDeleg
         
         let house = filteredHouses[indexPath.row]
         
+        house.printDescription()
+        
         let houseImages: [UIImage]
         if house.imageGallery.isEmpty,
            let image = house.imageProject {

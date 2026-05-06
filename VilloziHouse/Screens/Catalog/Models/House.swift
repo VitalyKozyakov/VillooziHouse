@@ -15,7 +15,12 @@ enum AreaRangeText {
     case twoHundredFiftyMetres
 }
 
-struct House {
+protocol Descriptable {
+    var description: String { get }
+    func printDescription()
+}
+
+struct House: Descriptable {
     let id: String
     let name: String
     let dimensions: String
@@ -58,5 +63,13 @@ struct House {
     
     var formattedRooms: String {
         return "\(bedrooms) комнат"
+    }
+    
+    var description: String {
+        return "House \(name) is located in the center of the city. It's square is \(formattedArea) m², \(formattedRooms). The price is \(formattedPrice)."
+    }
+    
+    func printDescription() {
+        print(description)
     }
 }

@@ -16,7 +16,7 @@ struct HouseCalculatorSections {
 struct HouseCalculatorSectionsBuilder {
     func build(from configuration: HouseConfiguration?) -> HouseCalculatorSections {
         let finishing = buildFinishingSections(from: configuration)
-        let engineering = buildEngineeringSections()
+        let engineering = buildEngineeringSections(from: configuration)
         let characteristics = buildCharacteristicSections(from: configuration)
         
         return HouseCalculatorSections(
@@ -193,31 +193,34 @@ struct HouseCalculatorSectionsBuilder {
         )
     }
     
-    private func buildEngineeringSections() -> [EngineeringSection] {
-        [
-            EngineeringSection(
-                title: "Отопление",
-                selectionType: .multiple,
-                            options: [
-                    EngineeringItem(id: "h1", title: "Электрический котел", deltaRub: 85000, isDefaultSelected: false),
-                    EngineeringItem(id: "h2", title: "Газовый котел", deltaRub: 120000, isDefaultSelected: false),
-                    EngineeringItem(id: "h3", title: "Твердотопливный котел", deltaRub: 95000, isDefaultSelected: false),
-                    EngineeringItem(id: "h4", title: "Тепловой насос", deltaRub: 350000, isDefaultSelected: false),
-                    EngineeringItem(id: "h5", title: "Радиаторы отопления", deltaRub: 89000, isDefaultSelected: false),
-                    EngineeringItem(id: "h6", title: "Теплый пол водяной", deltaRub: 145000, isDefaultSelected: false)
+    private func buildEngineeringSections(from configuration: HouseConfiguration?) -> [OptionSection] {
+        guard let configuration = configuration else { return [] }
+        let engineering = configuration.houseEngineer
+        return [
+            OptionSection(
+                title: "Отоплние",
+                selectionType: .single,
+                options: [
+                    OptionItem(id: "h1", title: "Электрический котел", deltaRub: engineering.electricS, isDefaultSelected: false),
+                    OptionItem(id: "h2", title: "Газовый котел", deltaRub: engineering.gas, isDefaultSelected: false),
+                    OptionItem(id: "h3", title: "Твердотопливный котел", deltaRub: engineering.tverd, isDefaultSelected: false),
+                    OptionItem(id: "h4", title: "Тепловой насос", deltaRub: engineering.teploNasos, isDefaultSelected: false),
+                    OptionItem(id: "h5", title: "Радиаторы отопления", deltaRub: engineering.radiator, isDefaultSelected: false),
+                    OptionItem(id: "h6", title: "Теплый пол водяной", deltaRub: engineering.tepliyPol, isDefaultSelected: false)
                 ]
             ),
-            EngineeringSection(
+           
+            OptionSection(
                 title: "Водоснабжение",
                 selectionType: .multiple,
                             options: [
-                                EngineeringItem(id: "w1", title: "Скважина", deltaRub: 120000, isDefaultSelected: false),
-                                EngineeringItem(id: "w2", title: "Насосная станция", deltaRub: 45000, isDefaultSelected: false),
-                                EngineeringItem(id: "w3", title: "Фильтрация воды", deltaRub: 35000, isDefaultSelected: false),
-                                EngineeringItem(id: "w4", title: "Водонагреватель", deltaRub: 55000, isDefaultSelected: false),
-                                EngineeringItem(id: "w5", title: "Трубы ХВС", deltaRub: 67000, isDefaultSelected: false),
-                                EngineeringItem(id: "w6", title: "Трубы ГВС", deltaRub: 67000, isDefaultSelected: false),
-                                EngineeringItem(id: "w7", title: "Коллектор водоснабжения", deltaRub: 28000, isDefaultSelected: false)
+                                OptionItem(id: "w1", title: "Скважина", deltaRub: 120000, isDefaultSelected: false),
+                                OptionItem(id: "w2", title: "Насосная станция", deltaRub: 45000, isDefaultSelected: false),
+                                OptionItem(id: "w3", title: "Фильтрация воды", deltaRub: 35000, isDefaultSelected: false),
+                                OptionItem(id: "w4", title: "Водонагреватель", deltaRub: 55000, isDefaultSelected: false),
+                                OptionItem(id: "w5", title: "Трубы ХВС", deltaRub: 67000, isDefaultSelected: false),
+                                OptionItem(id: "w6", title: "Трубы ГВС", deltaRub: 67000, isDefaultSelected: false),
+                                OptionItem(id: "w7", title: "Коллектор водоснабжения", deltaRub: 28000, isDefaultSelected: false)
                 ]
             )
         ]

@@ -697,7 +697,7 @@ final class CalculatingTheHouseViewController: UIViewController {
         } else {
             images = [UIImage(systemName: "127-14-1") ?? UIImage()]
         }
-        
+        header.delegate = self
         header.configure(images: images)
         tableView.tableHeaderView = header
     }
@@ -934,6 +934,7 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
                 return UITableViewCell()
             }
             
+//            cell.delegate = self
             
             let option = section.options[indexPath.row]
             let selectionType = section.selectionType
@@ -1040,7 +1041,13 @@ extension CalculatingTheHouseViewController: UITableViewDataSource, UITableViewD
         }
     }
 }
-
+extension CalculatingTheHouseViewController: CalculatingTheHouseCellDelegate {
+    func didTapImage(allImages: [UIImage]) {
+        print("jnrhskfcm ,jkmifz rfhnbyrf")
+    }
+    
+    
+}
 
 
 #Preview {

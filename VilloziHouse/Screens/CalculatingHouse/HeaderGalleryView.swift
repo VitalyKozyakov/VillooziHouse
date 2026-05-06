@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol CalculatingTheHouseCellDelegate: AnyObject {
+    func didTapImage(allImages: [UIImage])
+}
+
 class HeaderGalleryView: UIView {
     private var images: [UIImage] = []
+    
+    weak var delegate: CalculatingTheHouseCellDelegate?
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -74,6 +80,7 @@ extension HeaderGalleryView: UICollectionViewDataSource, UICollectionViewDelegat
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HouseImageCell.identifier, for: indexPath) as? HouseImageCell else {
             return UICollectionViewCell()
         }
+        cell.delegate = self
         cell.configure(with: images[indexPath.item])
         return cell
     }
@@ -82,8 +89,17 @@ extension HeaderGalleryView: UICollectionViewDataSource, UICollectionViewDelegat
         images.count
     }
     func collectionView(_ collectionView: UICollectionView,
-                            layout collectionViewLayout: UICollectionViewLayout,
-                            sizeForItemAt indexPath: IndexPath) -> CGSize {
-            return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
-        }
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.bounds.width, height: collectionView.bounds.height)
+    }
+}
+
+
+extension HeaderGalleryView: HouseImageCellDelegate {
+    func didTapImage(at index: Int) {
+        delegate?.didTapImage(allImages: images)
+    }
+    
+    
 }

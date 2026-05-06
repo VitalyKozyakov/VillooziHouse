@@ -7,16 +7,13 @@
 
 import UIKit
 
-protocol CalculatingTheHouseCellDelegate: AnyObject {
-    func didTapImage(in cell: CalculatingTheHouseCell, at index: Int, allImages: [UIImage])
-}
 
 class CalculatingTheHouseCell: UITableViewCell {
     
     static let identifier = "CalculatingTheHouseCell"
     
     private var images: [UIImage] = []
-    weak var delegate: CalculatingTheHouseCellDelegate?
+//    weak var delegate: CalculatingTheHouseCellDelegate?
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -181,6 +178,7 @@ extension CalculatingTheHouseCell: UICollectionViewDataSource, UICollectionViewD
             return UICollectionViewCell()
         }
         cell.configure(with: images[indexPath.row])
+        
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -198,12 +196,7 @@ extension CalculatingTheHouseCell: UIScrollViewDelegate {
     }
 }
 
-extension CalculatingTheHouseCell: HouseImageCellDelegate {
-    func didTapImage(at index: Int) {
-        let currentIndex = pageControl.currentPage
-        delegate?.didTapImage(in: self, at: currentIndex, allImages: images)
-            }
-        }
+
 
 #Preview {
     let navigationController = UINavigationController(
